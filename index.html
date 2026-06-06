@@ -141,79 +141,47 @@ body{font-family:-apple-system,'Segoe UI','PingFang HK','Microsoft YaHei',sans-s
 const QUESTION_BANKS = {
 
   // ===== JESSIE - ENGLISH (EXPANDED) =====
-  'jessie-past-tense': {
+    'jessie-past-tense': {
     name: 'Past Tense 過去式',
-    desc: '不規則動詞填空練習',
+    desc: '混合時態填空 (隨機生成)',
     icon: '⏳',
     color: '#9b59b6',
     type: 'fill_blank',
-    questions: [
-      {q:'Yesterday, I ___ (go) to the park.', a:'went'},
-      {q:'She ___ (eat) an apple this morning.', a:'ate'},
-      {q:'We ___ (see) a big rainbow after the rain.', a:'saw'},
-      {q:'He ___ (run) very fast in the race.', a:'ran'},
-      {q:'Mum ___ (buy) a new dress last week.', a:'bought'},
-      {q:'I ___ (bring) my book to school yesterday.', a:'brought'},
-      {q:'She ___ (catch) the ball with one hand.', a:'caught'},
-      {q:'They ___ (take) many photos at the zoo.', a:'took'},
-      {q:'Dad ___ (make) pancakes for breakfast.', a:'made'},
-      {q:'The cat ___ (sleep) on my bed last night.', a:'slept'},
-      {q:'I ___ (drink) a glass of milk before bed.', a:'drank'},
-      {q:'She ___ (write) a letter to her grandma.', a:'wrote'},
-      {q:'He ___ (sing) a beautiful song at the show.', a:'sang'},
-      {q:'We ___ (swim) in the sea last summer.', a:'swam'},
-      {q:'I ___ (give) my friend a birthday card.', a:'gave'},
-      {q:'The bird ___ (fly) away quickly.', a:'flew'},
-      {q:'Mum ___ (teach) me how to tie my shoes.', a:'taught'},
-      {q:'He ___ (break) his pencil in class.', a:'broke'},
-      {q:'I ___ (forget) my lunch box at home.', a:'forgot'},
-      {q:'She ___ (draw) a very nice picture.', a:'drew'},
-      {q:'They ___ (build) a sandcastle at the beach.', a:'built'},
-      {q:'I ___ (feel) very happy yesterday.', a:'felt'},
-      {q:'He ___ (read) three books last month.', a:'read'},
-      {q:'Mum ___ (put) the keys on the table.', a:'put'},
-      {q:'We ___ (have) a great time at the party.', a:'had'},
-      {q:'I ___ (do) my homework after dinner.', a:'did'},
-      {q:'She ___ (say) sorry to her brother.', a:'said'},
-      {q:'The phone ___ (ring) during dinner.', a:'rang'},
-      {q:'He ___ (sit) at the front of the class.', a:'sat'},
-      {q:'I ___ (think) the movie was very funny.', a:'thought'},
-      {q:'Last Friday, Lily ___ (hear) a small cry behind the bin.', a:'heard'},
-      {q:'She ___ (find) a little puppy hiding there.', a:'found'},
-      {q:'Dad ___ (come) to see what was happening.', a:'came'},
-      {q:'Lily ___ (feel) so excited when Dad said yes.', a:'felt'},
-      {q:'Tina ___ (spin) around three times and flew up!', a:'spun'},
-      {q:'She ___ (not believe) her eyes when the shoes glowed.', a:'did not believe'},
-      {q:'Tommy the turtle ___ (find) a pair of wings.', a:'found'},
-      {q:'He ___ (put) the wings on but they did not work.', a:'put'},
-      {q:'Bella ___ (come) to help her friend Tommy.', a:'came'},
-      {q:'Last Tuesday, Tom ___ (catch) a big fish.', a:'caught'},
-      {q:'Grandma ___ (give) Tina red dancing shoes.', a:'gave'},
-      {q:'The fairy ___ (teach) Suki to talk to animals.', a:'taught'},
-      {q:'Suki ___ (throw) a coin into the wishing well.', a:'threw'},
-      {q:'The water ___ (begin) to glow with magic light.', a:'began'},
-      {q:'Ben ___ (take) off his jacket to wrap the kitten.', a:'took'},
-      {q:'He ___ (run) all the way home with the kitten.', a:'ran'},
-      {q:'The older boys ___ (laugh) at Tom in the playground.', a:'laughed'},
-      {q:'Lily ___ (shout) at them to stop being mean.', a:'shouted'},
-      {q:'I ___ (introduce) the new girl to all my friends.', a:'introduced'},
-      {q:'Last Monday, a new girl ___ (join) our class.', a:'joined'},
-      {q:'We ___ (play) together on the field until it was dark.', a:'played'},
-      {q:'Peter ___ (get) up at seven o\'clock this morning.', a:'got'},
-      {q:'He ___ (eat) toast and drank milk for breakfast.', a:'ate'},
-      {q:'Sally ___ (wear) her new red dress to the party.', a:'wore'},
-      {q:'All her friends ___ (like) the dress very much.', a:'liked'},
-      {q:'Ben and his dad ___ (go) fishing last weekend.', a:'went'},
-      {q:'They ___ (sit) by the river for two hours.', a:'sat'},
-      {q:'Mum ___ (cook) the fish for dinner that night.', a:'cooked'},
-      {q:'Last night, I ___ (hear) a strange noise outside.', a:'heard'},
-      {q:'I ___ (hide) under my blanket because I was scared.', a:'hid'},
-      {q:'She ___ (tell) her mum about the magic garden.', a:'told'},
-      {q:'Dad ___ (drive) us to the beach last Sunday.', a:'drove'},
-      {q:'I ___ (wake) up very early this morning.', a:'woke'},
-      {q:'The children ___ (sing) Happy Birthday to Grandma.', a:'sang'},
-    ]
+    generator: function() {
+      var verbs=[
+        {b:'go',p:'went'},{b:'eat',p:'ate'},{b:'see',p:'saw'},{b:'run',p:'ran'},
+        {b:'buy',p:'bought'},{b:'bring',p:'brought'},{b:'catch',p:'caught'},{b:'take',p:'took'},
+        {b:'make',p:'made'},{b:'sleep',p:'slept'},{b:'drink',p:'drank'},{b:'write',p:'wrote'},
+        {b:'sing',p:'sang'},{b:'swim',p:'swam'},{b:'give',p:'gave'},{b:'fly',p:'flew'},
+        {b:'teach',p:'taught'},{b:'break',p:'broke'},{b:'forget',p:'forgot'},{b:'draw',p:'drew'},
+        {b:'build',p:'built'},{b:'feel',p:'felt'},{b:'read',p:'read'},{b:'put',p:'put'},
+        {b:'have',p:'had'},{b:'do',p:'did'},{b:'say',p:'said'},{b:'ring',p:'rang'},
+        {b:'sit',p:'sat'},{b:'think',p:'thought'},{b:'hear',p:'heard'},{b:'find',p:'found'},
+        {b:'come',p:'came'},{b:'tell',p:'told'},{b:'spin',p:'spun'},{b:'begin',p:'began'},
+        {b:'throw',p:'threw'},{b:'hide',p:'hid'},{b:'wake',p:'woke'},{b:'wear',p:'wore'},
+        {b:'drive',p:'drove'},{b:'fall',p:'fell'},{b:'speak',p:'spoke'},{b:'spend',p:'spent'},
+        {b:'leave',p:'left'},{b:'lose',p:'lost'},{b:'meet',p:'met'},{b:'pay',p:'paid'},
+        {b:'stand',p:'stood'},{b:'win',p:'won'},
+      ];
+      var subjects=['I','She','He','They','We','Mum','Dad','Tom','Lily','The children','My friend','The teacher'];
+      var times=['Yesterday','Last night','Last week','Last Sunday','This morning','Two days ago','Last Monday'];
+      var sub=subjects[Math.floor(Math.random()*subjects.length)];
+      var v=verbs[Math.floor(Math.random()*verbs.length)];
+      var t=times[Math.floor(Math.random()*times.length)];
+      var extras=[
+        sub+' ___ ('+v.b+') to school '+t+'.',
+        t+', '+sub+' ___ ('+v.b+') a big surprise.',
+        sub+' ___ ('+v.b+') very happy '+t+'.',
+        t+', '+sub+' ___ ('+v.b+') something amazing.',
+        sub+' ___ ('+v.b+') the best gift '+t+'.',
+        t+', '+sub+' ___ ('+v.b+') all the way home.',
+        sub+' ___ ('+v.b+') a beautiful picture '+t+'.',
+      ];
+      var q=extras[Math.floor(Math.random()*extras.length)];
+      return {q:q, a:v.p};
+    }
   },
+
 
   'jessie-prepositions': {
     name: 'Prepositions 介詞',
@@ -429,7 +397,75 @@ const QUESTION_BANKS = {
       {passage:'Suki lives in a small village. Every Sunday, she walks to the old wishing well behind her house. Last Sunday, she threw a coin into the water and closed her eyes. "I wish I could help the animals," she whispered. Suddenly, the water began to glow! A tiny fairy flew out of the well. "Your wish is very kind," the fairy said. The fairy taught Suki how to talk to animals. From that day on, Suki spent every afternoon helping animals in the forest.',questions:[{q:'Where is the wishing well?',a:'behind her house',opts:['in the forest','behind her house','near the river','at the park']},{q:'What did Suki wish for?',a:'to help the animals',opts:['to fly','to help the animals','to be rich','to make friends']},{q:'What came out of the well?',a:'a tiny fairy',opts:['a big fish','a tiny fairy','a golden coin','a magic frog']}]},
       {passage:'Peter got up at seven o\'clock last Saturday. He ate toast and drank milk for breakfast. Then he walked to the park with his dog, Max. At the park, Peter saw his friends Tom and Mary. They played football for an hour. After that, they went to the pond to feed the ducks. Peter\'s mum came at twelve o\'clock with sandwiches. They all sat under a big tree and had a picnic. It was a wonderful day.',questions:[{q:'What time did Peter get up?',a:'seven o\'clock',opts:['six o\'clock','seven o\'clock','eight o\'clock','nine o\'clock']},{q:'What is Peter\'s dog called?',a:'Max',opts:['Buddy','Max','Rocky','Charlie']},{q:'What did they do at the pond?',a:'fed the ducks',opts:['swam','fed the ducks','caught fish','took photos']}]},
       {passage:'One day, some older boys laughed at Tom because he could not catch the ball. Lily saw this and felt angry. She walked up to the boys and shouted, "Don\'t laugh at him! He is trying his best!" The boys were surprised. They said sorry to Tom and walked away. Tom said, "Thank you for helping me." Lily smiled. "That is what friends do," she said. From that day on, Lily and Tom became best friends.',questions:[{q:'Why did the boys laugh at Tom?',a:'he could not catch the ball',opts:['he fell down','he could not catch the ball','he was small','he cried']},{q:'How did Lily feel?',a:'angry',opts:['scared','angry','sad','happy']},{q:'What did Lily shout?',a:'Don\'t laugh at him',opts:['Go away','Don\'t laugh at him','Leave us alone','Stop playing']}]},
+      {passage:'Mum and Jessie went to the flower market last Saturday. It was very crowded. Jessie saw many beautiful flowers in red, pink, and yellow. She bought a small plant for her bedroom. Mum bought roses for Grandma. They walked around for two hours and ate fish balls. Jessie said it was the best Saturday ever.',questions:[{q:'Where did they go last Saturday?',a:'the flower market',opts:['the park','the flower market','the supermarket','the beach']},{q:'What colours were the flowers?',a:'red, pink, and yellow',opts:['blue and green','red, pink, and yellow','purple and white','orange and black']},{q:'What did Mum buy for Grandma?',a:'roses',opts:['tulips','roses','a plant','fish balls']},{q:'How long did they walk around?',a:'two hours',opts:['one hour','two hours','three hours','half an hour']}]},
+      {passage:'Tom woke up late last Monday. He ran to the bus stop but the bus had already left. He felt worried because he had a Maths test that morning. He started walking to school. On the way, his neighbour Mrs Chan saw him and gave him a ride. Tom arrived just in time for the test. He was so thankful!',questions:[{q:'Why was Tom worried?',a:'he had a Maths test',opts:['he lost his bag','he had a Maths test','he was sick','it was raining']},{q:'Who helped Tom?',a:'Mrs Chan',opts:['his mum','Mrs Chan','his friend','the bus driver']},{q:'How did Tom get to school?',a:'Mrs Chan gave him a ride',opts:['he took the bus','he walked all the way','Mrs Chan gave him a ride','his dad drove him']}]},
+      {passage:'Amy and her family went to the beach last summer. The sun was very hot. Amy built a big sandcastle with her little brother. Dad swam in the sea for an hour. Mum sat under an umbrella and read a book. They had sandwiches and juice for lunch. Amy found three pretty shells to take home.',questions:[{q:'What did Amy build?',a:'a sandcastle',opts:['a sandcastle','a boat','a house','a tower']},{q:'Who did Amy build it with?',a:'her little brother',opts:['her dad','her little brother','her mum','her friend']},{q:'How many shells did Amy find?',a:'three',opts:['two','three','five','ten']},{q:'What did Mum do?',a:'read a book',opts:['swam','read a book','built a sandcastle','slept']}]},
+      {passage:'It was Sports Day last Friday. All the students were very excited. Jessie ran in the 100-metre race. She ran as fast as she could. At the end, she came second! Her best friend May came first. They hugged each other and laughed. Their teacher Mrs Wong said, Well done girls! I am so proud of you!',questions:[{q:'When was Sports Day?',a:'last Friday',opts:['last Monday','last Friday','last Saturday','last Sunday']},{q:'What place did Jessie come in?',a:'second',opts:['first','second','third','fourth']},{q:'Who came first?',a:'May',opts:['Jessie','May','Mrs Wong','Tom']},{q:'How did the teacher feel?',a:'proud',opts:['angry','sad','proud','worried']}]},
+      {passage:'Last night, there was a big storm. The wind blew very hard and the rain was heavy. Jessie could not sleep because of the thunder. She went to her parents room. Mum read her a story until she felt calm. After the storm passed, Jessie saw a beautiful rainbow from her window the next morning.',questions:[{q:'Why could Jessie not sleep?',a:'because of the thunder',opts:['she was hungry','because of the thunder','she was too hot','she had homework']},{q:'What did Mum do to help?',a:'read her a story',opts:['gave her milk','read her a story','sang a song','opened the window']},{q:'What did Jessie see the next morning?',a:'a rainbow',opts:['a rainbow','a bird','the sun','a cloud']}]},
+      {passage:'Dad bought a new pet for the family last month. It was a small golden hamster. Jessie named it Sunny because it was yellow like the sun. Every morning, Jessie feeds Sunny some seeds. After school, she lets Sunny run in a little ball around the living room. Sometimes Sunny hides under the sofa and Jessie has to look for him.',questions:[{q:'What pet did Dad buy?',a:'a hamster',opts:['a dog','a hamster','a cat','a rabbit']},{q:'Why did Jessie name it Sunny?',a:'it was yellow like the sun',opts:['it liked the sun','it was yellow like the sun','it was born on Sunday','it was very bright']},{q:'Where does Sunny sometimes hide?',a:'under the sofa',opts:['under the bed','under the sofa','in the kitchen','behind the door']}]},
+      {passage:'Miss Lee took her class to the Science Museum last Wednesday. The children were very excited. They saw real dinosaur bones and a huge model of a spaceship. Peter liked the robot that could talk and dance. Mary liked the room full of colourful lights. At the end, they visited the gift shop. Jessie bought a small telescope to look at the stars at home.',questions:[{q:'Where did Miss Lee take the class?',a:'the Science Museum',opts:['the zoo','the Science Museum','the park','the library']},{q:'What did Peter like?',a:'the robot',opts:['the dinosaur','the robot','the spaceship','the lights']},{q:'What did Jessie buy?',a:'a telescope',opts:['a book','a telescope','a toy','a poster']}]},
+      {passage:'Grandma came to visit last weekend. She brought a big box of homemade cookies. Jessie and her brother were so happy! They ate cookies and drank milk in the garden. Grandma told them stories about when she was a little girl. Before Grandma left, she gave each of them a big hug and a red packet.',questions:[{q:'What did Grandma bring?',a:'homemade cookies',opts:['a cake','homemade cookies','books','toys']},{q:'Where did they eat the cookies?',a:'in the garden',opts:['in the kitchen','in the garden','in the living room','at the park']},{q:'What did Grandma give them before leaving?',a:'a hug and a red packet',opts:['more cookies','a hug and a red packet','a book','money']}]},
+      {passage:'It was Jessies birthday last Tuesday. She woke up and found a big present on her desk. It was a new art set with paints, brushes, and a drawing book! She was so excited. At school, her friends sang Happy Birthday to her. After school, Mum took her to her favourite restaurant. She ate spaghetti and ice-cream. She said it was the best birthday ever.',questions:[{q:'What was the present on her desk?',a:'an art set',opts:['a doll','an art set','a book','a dress']},{q:'What did her friends do at school?',a:'sang Happy Birthday',opts:['gave presents','sang Happy Birthday','danced','drew pictures']},{q:'Where did Mum take her after school?',a:'her favourite restaurant',opts:['the park','the cinema','her favourite restaurant','the toy shop']},{q:'What did she eat?',a:'spaghetti and ice-cream',opts:['pizza and cake','spaghetti and ice-cream','noodles and fruit','rice and juice']}]},
+      {passage:'Dad took Justin and Jessie hiking last Sunday. They woke up very early and drove to the mountain. The trail was long but they walked slowly and enjoyed the fresh air. They saw many butterflies and a small waterfall. At the top, they ate sandwiches and took photos. Justin found an interesting rock shaped like a heart and gave it to Mum when they got home.',questions:[{q:'Where did they go last Sunday?',a:'hiking on a mountain',opts:['to the beach','hiking on a mountain','to the park','to the zoo']},{q:'What did they see on the way?',a:'butterflies and a waterfall',opts:['birds and a lake','butterflies and a waterfall','a rainbow','wild animals']},{q:'What did Justin find?',a:'a heart-shaped rock',opts:['a flower','a heart-shaped rock','a coin','a feather']},{q:'Who did Justin give it to?',a:'Mum',opts:['Mum','Dad','Jessie','his teacher']}]},
+      {passage:'One morning, Jessie found a little bird on her balcony. It could not fly. Its wing was hurt. Jessie called Mum and they took the bird to the vet. The vet said the bird needed rest and gave it some medicine. Jessie looked after the bird for three days. She fed it seeds and water. On the fourth day, the bird could fly again. Jessie opened the window and the bird flew away happily.',questions:[{q:'Where did Jessie find the bird?',a:'on her balcony',opts:['in the garden','on her balcony','at school','in the park']},{q:'Why could the bird not fly?',a:'its wing was hurt',opts:['it was too young','its wing was hurt','it was tired','it was scared']},{q:'How many days did Jessie look after it?',a:'three',opts:['one','two','three','five']},{q:'What happened on the fourth day?',a:'the bird flew away',opts:['the bird died','the bird flew away','they kept it','it snowed']}]},
+
+
     ]
+  },
+
+  
+  'jessie-fixed-expr': {
+    name: 'Fixed Expressions 固定搭配',
+    desc: 'Phrasal Verbs / Prep / Structures',
+    icon: '🔧',
+    color: '#c0392b',
+    type: 'choice',
+    generator: function() {
+      var t=[
+{q:'___ me! I have something to tell you.',o:['Listen to','Listen','Hear to','Hear'],a:'Listen to'},
+{q:'Please ___ the board and read the words.',o:['look at','look','see at','watch at'],a:'look at'},
+{q:'I am ___ my keys. Have you seen them?',o:['looking for','looking at','looking after','finding for'],a:'looking for'},
+{q:'Mum ___ us every day after school.',o:['looks after','looks for','takes care','looks at'],a:'looks after'},
+{q:'Can you ___ your little brother for me?',o:['take care of','take care','look for','care of'],a:'take care of'},
+{q:'She ___ her best friend on the phone every night.',o:['talks to','talks','says to','speaks'],a:'talks to'},
+{q:'Come and ___ me in the garden!',o:['play with','play','play together','plays with'],a:'play with'},
+{q:"Don't ___ me! It's not funny.",o:['play tricks on','play with','trick at','play tricks'],a:'play tricks on'},
+{q:'The boys ___ Tom because he fell down.',o:['laughed at','laughed','smiled at','shouted'],a:'laughed at'},
+{q:"Don't ___ your sister! Use a nice voice.",o:['shout at','shout','talk to','say at'],a:'shout at'},
+{q:'The baby ___ her mum and looked very happy.',o:['smiled at','laughed at','shouted at','cried at'],a:'smiled at'},
+{q:"Don't ___ your classmates. Be kind.",o:['fight with','fight','argue with','hit'],a:'fight with'},
+{q:'I ___ my lunch ___ my friend who forgot hers.',o:['shared / with','shared / to','gave / for','shared / for'],a:'shared / with'},
+{q:'Tom was sad so his friends tried to ___ him ___.',o:['cheer / up','cheer / on','make / happy','look / after'],a:'cheer / up'},
+{q:'Someone ___ my shoulder from behind.',o:['tapped on','tapped','knocked on','hit on'],a:'tapped on'},
+{q:'Please ___ the book ___ me when you finish.',o:['give / to','give / for','pass / for','hand / at'],a:'give / to'},
+{q:'We ___ the bus stop for twenty minutes.',o:['waited at','waited','waited in','waited on'],a:'waited at'},
+{q:'She is very ___ singing and dancing.',o:['good at','good in','good for','well at'],a:'good at'},
+{q:'He is ___ making potions. They always explode!',o:['bad at','bad in','bad for','poor at'],a:'bad at'},
+{q:'I am ___ learning about space and planets.',o:['interested in','interested at','interesting in','good at'],a:'interested in'},
+{q:'The little girl was ___ the big dog.',o:['scared of','scared at','afraid at','scared in'],a:'scared of'},
+{q:'Mum was ___ me when I came home late.',o:['worried about','worried for','scared of','worried at'],a:'worried about'},
+{q:'She enjoys ___ in the school choir.',o:['singing','sing','to sing','sang'],a:'singing'},
+{q:'He loves ___ basketball with his friends.',o:['playing','play','to playing','played'],a:'playing'},
+{q:'Jessie is good at ___ pictures of animals.',o:['drawing','draw','to draw','drew'],a:'drawing'},
+{q:'I am bad at ___ my room tidy.',o:['keeping','keep','to keep','kept'],a:'keeping'},
+{q:"Let's ___ to the park after lunch!",o:['go','going','to go','went'],a:'go'},
+{q:'___ she ___ her homework last night?',o:['Did / do','Did / did','Does / do','Was / do'],a:'Did / do'},
+{q:'The park is ___ the school and the library.',o:['between','in','on','at'],a:'between'},
+{q:'My birthday is ___ 15th March.',o:['on','in','at','by'],a:'on'},
+{q:'We go to the beach ___ summer.',o:['in','on','at','by'],a:'in'},
+{q:"School starts ___ eight o'clock.",o:['at','in','on','by'],a:'at'},
+{q:'I waited ___ two hours but she did not come.',o:['for','in','at','since'],a:'for'},
+{q:'The shop is open ___ Monday ___ Friday.',o:['from / to','from / until','at / to','in / to'],a:'from / to'},
+{q:'She sits ___ me in the classroom.',o:['next to','next','near to','beside of'],a:'next to'},
+{q:'___ Christmas, we always have a big dinner.',o:['At','In','On','By'],a:'At'},
+{q:'I was born ___ a cold winter morning.',o:['on','in','at','by'],a:'on'},
+{q:'The cat jumped ___ the box and hid.',o:['into','in','on','at'],a:'into'},
+{q:'We arrived ___ the airport very early.',o:['at','in','on','to'],a:'at'},
+{q:'There is a bridge ___ the river.',o:['over','on','above','at'],a:'over'},
+      ];
+      var q=t[Math.floor(Math.random()*t.length)];
+      return {q:q.q, a:q.a, opts:q.o.sort(function(){return Math.random()-0.5})};
+    }
   },
 
   // ===== JUSTIN - MATH =====
@@ -814,7 +850,7 @@ const QUESTION_BANKS = {
 
 // ===== APP STATE =====
 const PROFILES = {
-  jessie: { name: 'Jessie', grade: 'P2 嘉諾撒聖心', avatar: 'J', color: 'jessie', subjects: ['jessie-past-tense','jessie-prepositions','jessie-wh-past','jessie-conjunctions','jessie-irregular-verbs','jessie-reading'] },
+  jessie: { name: 'Jessie', grade: 'P2 嘉諾撒聖心', avatar: 'J', color: 'jessie', subjects: ['jessie-past-tense','jessie-prepositions','jessie-wh-past','jessie-conjunctions','jessie-fixed-expr','jessie-irregular-verbs','jessie-reading'] },
   justin: { name: 'Justin', grade: 'P1 蘇浙小學', avatar: 'J', color: 'justin', subjects: ['justin-addition','justin-subtraction','justin-speed-math','justin-word-problems','justin-currency','justin-calendar','justin-time','justin-number-concepts'] }
 };
 
@@ -961,7 +997,7 @@ function renderExercise() {
   let answerArea = '';
   if (qType === 'reading') {
     const opts = q.opts.map(o => `
-      <button class="option-btn ${themeClass}" onclick="selectOption('${o.replace(/'/g,"\\'")}')" id="opt-${o.replace(/[^a-zA-Z0-9]/g,'_')}">${o}</button>
+      <button class="option-btn ${themeClass}" onclick="selectOption('${o.replace(/'/g,"\\'")}')" id="opt-${hid(o)}">${o}</button>
     `).join('');
     answerArea = `
       <div class="option-grid">${opts}</div>
@@ -969,7 +1005,7 @@ function renderExercise() {
     `;
   } else if (qType === 'choice') {
     const opts = q.opts.map(o => `
-      <button class="option-btn ${themeClass}" onclick="selectOption('${o.replace(/'/g,"\\'")}')" id="opt-${o.replace(/[^a-zA-Z0-9]/g,'_')}">${o}</button>
+      <button class="option-btn ${themeClass}" onclick="selectOption('${o.replace(/'/g,"\\'")}')" id="opt-${hid(o)}">${o}</button>
     `).join('');
     answerArea = `
       <div class="option-grid">${opts}</div>
@@ -1017,6 +1053,7 @@ function renderExercise() {
 }
 
 let selectedOption = null;
+function hid(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return Math.abs(h).toString(36);}
 function exitExercise() {
   if (answered) return; // don't exit while feedback is showing
   if (confirm('確定要退出練習嗎？目前的進度將不會保存。')) {
@@ -1026,7 +1063,7 @@ function exitExercise() {
 function selectOption(opt) {
   selectedOption = opt;
   document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-  const el = document.getElementById(`opt-${opt.replace(/[^a-zA-Z0-9]/g,'_')}`);
+  const el = document.getElementById('opt-'+hid(opt));
   if (el) el.classList.add('selected');
   document.getElementById('submit-btn').disabled = false;
 }
@@ -1350,4 +1387,16 @@ if ('serviceWorker' in navigator) {
 render();
 </script>
 </body>
-</html>
+</html>      {passage:'Mum and Jessie went to the flower market last Saturday. It was very crowded. Jessie saw many beautiful flowers in red, pink, and yellow. She bought a small plant for her bedroom. Mum bought roses for Grandma. They walked around for two hours and ate fish balls. Jessie said it was the best Saturday ever.',questions:[{q:'Where did they go last Saturday?',a:'the flower market',opts:['the park','the flower market','the supermarket','the beach']},{q:'What colours were the flowers?',a:'red, pink, and yellow',opts:['blue and green','red, pink, and yellow','purple and white','orange and black']},{q:'What did Mum buy for Grandma?',a:'roses',opts:['tulips','roses','a plant','fish balls']},{q:'How long did they walk around?',a:'two hours',opts:['one hour','two hours','three hours','half an hour']}]},
+      {passage:'Tom woke up late last Monday. He ran to the bus stop but the bus had already left. He felt worried because he had a Maths test that morning. He started walking to school. On the way, his neighbour Mrs Chan saw him and gave him a ride. Tom arrived just in time for the test. He was so thankful!',questions:[{q:'Why was Tom worried?',a:'he had a Maths test',opts:['he lost his bag','he had a Maths test','he was sick','it was raining']},{q:'Who helped Tom?',a:'Mrs Chan',opts:['his mum','Mrs Chan','his friend','the bus driver']},{q:'How did Tom get to school?',a:'Mrs Chan gave him a ride',opts:['he took the bus','he walked all the way','Mrs Chan gave him a ride','his dad drove him']}]},
+      {passage:'Amy and her family went to the beach last summer. The sun was very hot. Amy built a big sandcastle with her little brother. Dad swam in the sea for an hour. Mum sat under an umbrella and read a book. They had sandwiches and juice for lunch. Amy found three pretty shells to take home.',questions:[{q:'What did Amy build?',a:'a sandcastle',opts:['a sandcastle','a boat','a house','a tower']},{q:'Who did Amy build it with?',a:'her little brother',opts:['her dad','her little brother','her mum','her friend']},{q:'How many shells did Amy find?',a:'three',opts:['two','three','five','ten']},{q:'What did Mum do?',a:'read a book',opts:['swam','read a book','built a sandcastle','slept']}]},
+      {passage:'It was Sports Day last Friday. All the students were very excited. Jessie ran in the 100-metre race. She ran as fast as she could. At the end, she came second! Her best friend May came first. They hugged each other and laughed. Their teacher Mrs Wong said, "Well done, girls! I am so proud of you!"',questions:[{q:'When was Sports Day?',a:'last Friday',opts:['last Monday','last Friday','last Saturday','last Sunday']},{q:'What place did Jessie come in?',a:'second',opts:['first','second','third','fourth']},{q:'Who came first?',a:'May',opts:['Jessie','May','Mrs Wong','Tom']},{q:'How did the teacher feel?',a:'proud',opts:['angry','sad','proud','worried']}]},
+      {passage:'Last night, there was a big storm. The wind blew very hard and the rain was heavy. Jessie could not sleep because of the thunder. She went to her parents' room. Mum read her a story until she felt calm. After the storm passed, Jessie saw a beautiful rainbow from her window the next morning.',questions:[{q:'Why could Jessie not sleep?',a:'because of the thunder',opts:['she was hungry','because of the thunder','she was too hot','she had homework']},{q:'What did Mum do to help?',a:'read her a story',opts:['gave her milk','read her a story','sang a song','opened the window']},{q:'What did Jessie see the next morning?',a:'a rainbow',opts:['a rainbow','a bird','the sun','a cloud']},{q:'When was the storm?',a:'last night',opts:['last week','last night','yesterday morning','this morning']}]},
+      {passage:'Dad bought a new pet for the family last month. It was a small golden hamster. Jessie named it Sunny because it was yellow like the sun. Every morning, Jessie feeds Sunny some seeds. After school, she lets Sunny run in a little ball around the living room. Sunny is very fast! Sometimes Sunny hides under the sofa and Jessie has to look for him.',questions:[{q:'What pet did Dad buy?',a:'a hamster',opts:['a dog','a hamster','a cat','a rabbit']},{q:'Why did Jessie name it Sunny?',a:'it was yellow like the sun',opts:['it liked the sun','it was yellow like the sun','it was born on Sunday','it was very bright']},{q:'Where does Sunny sometimes hide?',a:'under the sofa',opts:['under the bed','under the sofa','in the kitchen','behind the door']},{q:'When did Dad buy the pet?',a:'last month',opts:['last week','last month','yesterday','last year']}]},
+      {passage:'Miss Lee took her class to the Science Museum last Wednesday. The children were very excited. They saw real dinosaur bones and a huge model of a spaceship. Peter liked the robot that could talk and dance. Mary liked the room full of colourful lights. At the end, they visited the gift shop. Jessie bought a small telescope to look at the stars at home.',questions:[{q:'Where did Miss Lee take the class?',a:'the Science Museum',opts:['the zoo','the Science Museum','the park','the library']},{q:'What did Peter like?',a:'the robot',opts:['the dinosaur','the robot','the spaceship','the lights']},{q:'What did Jessie buy?',a:'a telescope',opts:['a book','a telescope','a toy','a poster']},{q:'When did they go?',a:'last Wednesday',opts:['last Monday','last Wednesday','last Friday','last Saturday']}]},
+      {passage:'Grandma came to visit last weekend. She brought a big box of homemade cookies. Jessie and her brother were so happy! They ate cookies and drank milk in the garden. Grandma told them stories about when she was a little girl. She said she used to walk five kilometres to school every day! Before Grandma left, she gave each of them a big hug and a red packet.',questions:[{q:'What did Grandma bring?',a:'homemade cookies',opts:['a cake','homemade cookies','books','toys']},{q:'Where did they eat the cookies?',a:'in the garden',opts:['in the kitchen','in the garden','in the living room','at the park']},{q:'What did Grandma give them before leaving?',a:'a hug and a red packet',opts:['more cookies','a hug and a red packet','a book','money']},{q:'How far did Grandma walk to school?',a:'five kilometres',opts:['one kilometre','five kilometres','ten kilometres','two kilometres']}]},
+      {passage:'It was Jessie's birthday last Tuesday. She woke up and found a big present on her desk. It was a new art set with paints, brushes, and a drawing book! She was so excited. At school, her friends sang Happy Birthday to her. After school, Mum took her to her favourite restaurant. She ate spaghetti and ice-cream. She said it was the best birthday ever.',questions:[{q:'What was the present on her desk?',a:'an art set',opts:['a doll','an art set','a book','a dress']},{q:'What did her friends do at school?',a:'sang Happy Birthday',opts:['gave presents','sang Happy Birthday','danced','drew pictures']},{q:'Where did Mum take her after school?',a:'her favourite restaurant',opts:['the park','the cinema','her favourite restaurant','the toy shop']},{q:'What did she eat?',a:'spaghetti and ice-cream',opts:['pizza and cake','spaghetti and ice-cream','noodles and fruit','rice and juice']}]},
+      {passage:'Dad took Justin and Jessie hiking last Sunday. They woke up very early and drove to the mountain. The trail was long but they walked slowly and enjoyed the fresh air. They saw many butterflies and a small waterfall. At the top, they ate sandwiches and took photos. Justin found a interesting rock shaped like a heart and gave it to Mum when they got home.',questions:[{q:'Where did they go last Sunday?',a:'hiking on a mountain',opts:['to the beach','hiking on a mountain','to the park','to the zoo']},{q:'What did they see on the way?',a:'butterflies and a waterfall',opts:['birds and a lake','butterflies and a waterfall','a rainbow','wild animals']},{q:'What did Justin find?',a:'a heart-shaped rock',opts:['a flower','a heart-shaped rock','a coin','a feather']},{q:'Who did Justin give it to?',a:'Mum',opts:['Mum','Dad','Jessie','his teacher']}]},
+      {passage:'One morning, Jessie found a little bird on her balcony. It could not fly. Its wing was hurt. Jessie called Mum and they took the bird to the vet. The vet said the bird needed rest and gave it some medicine. Jessie looked after the bird for three days. She fed it seeds and water. On the fourth day, the bird could fly again. Jessie opened the window and the bird flew away happily.',questions:[{q:'Where did Jessie find the bird?',a:'on her balcony',opts:['in the garden','on her balcony','at school','in the park']},{q:'Why could the bird not fly?',a:'its wing was hurt',opts:['it was too young','its wing was hurt','it was tired','it was scared']},{q:'How many days did Jessie look after it?',a:'three',opts:['one','two','three','five']},{q:'What happened on the fourth day?',a:'the bird flew away',opts:['the bird died','the bird flew away','they kept it','it snowed']}]},
+
+
