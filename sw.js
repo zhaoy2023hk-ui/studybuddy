@@ -1,4 +1,4 @@
-const CACHE_NAME = 'studybuddy-v3';
+const CACHE_NAME = 'studybuddy-v4';
 const FILES_TO_CACHE = [
   './',
   './index.html',
