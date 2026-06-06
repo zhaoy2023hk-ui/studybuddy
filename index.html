@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#4a90d9">
+<link rel="manifest" href="manifest.json">
+<title>StudyBuddy - 學習訓練</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f0eb;--card:#fff;--text:#2c3e50;--text-light:#7f8c8d;
+  --jessie:#9b59b6;--jessie-light:#f3e8f9;--jessie-dark:#7d3c98;
+  --justin:#3498db;--justin-light:#e8f4fd;--justin-dark:#2471a3;
+  --correct:#27ae60;--wrong:#e74c3c;--gold:#f39c12;
+  --radius:14px;--shadow:0 2px 12px rgba(0,0,0,.08);
+}
+body{font-family:-apple-system,'Segoe UI','PingFang HK','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent}
+#app{width:100%;max-width:480px;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+/* Screens */
+.screen{display:none;flex-direction:column;flex:1;padding:20px 16px;animation:fadeIn .25s ease}
+.screen.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* Header */
+.header{text-align:center;padding:16px 0 8px}
+.header h1{font-size:22px;font-weight:700}
+.header .subtitle{font-size:13px;color:var(--text-light);margin-top:2px}
+/* Profile Selection */
+.profile-grid{display:flex;gap:16px;justify-content:center;margin-top:32px;flex:1;align-items:center}
+.profile-card{flex:1;max-width:180px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 16px;text-align:center;cursor:pointer;transition:transform .15s,box-shadow .15s;border:3px solid transparent}
+.profile-card:active{transform:scale(.97)}
+.profile-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.12)}
+.profile-card.jessie{border-color:var(--jessie)}
+.profile-card.justin{border-color:var(--justin)}
+.profile-avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:36px;font-weight:700;color:#fff}
+.profile-card.jessie .profile-avatar{background:linear-gradient(135deg,var(--jessie),var(--jessie-dark))}
+.profile-card.justin .profile-avatar{background:linear-gradient(135deg,var(--justin),var(--justin-dark))}
+.profile-name{font-size:17px;font-weight:600;margin-bottom:4px}
+.profile-grade{font-size:12px;color:var(--text-light)}
+/* Dashboard */
+.dash-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.dash-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0}
+.dash-avatar.jessie{background:var(--jessie)}
+.dash-avatar.justin{background:var(--justin)}
+.dash-info{flex:1}
+.dash-name{font-size:18px;font-weight:600;line-height:1.2}
+.dash-grade{font-size:12px;color:var(--text-light)}
+.dash-back{font-size:26px;color:var(--text-light);cursor:pointer;padding:8px}
+.section-title{font-size:14px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin:20px 0 10px}
+.subject-list{display:flex;flex-direction:column;gap:10px}
+.subject-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .12s}
+.subject-card:active{transform:scale(.98)}
+.subject-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.subject-info{flex:1;min-width:0}
+.subject-name{font-size:15px;font-weight:600;margin-bottom:3px}
+.subject-desc{font-size:12px;color:var(--text-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.subject-score{font-size:13px;font-weight:600;text-align:right}
+.subject-score.good{color:var(--correct)}
+.subject-score.ok{color:var(--gold)}
+.subject-score.poor{color:var(--wrong)}
+.progress-bar{height:4px;background:#eee;border-radius:2px;margin-top:6px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;transition:width .3s}
+/* Exercise */
+.ex-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.ex-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px}
+.ex-counter{font-size:13px;color:var(--text-light)}
+.ex-exit{width:36px;height:36px;border-radius:50%;border:none;background:#f0ebe0;color:var(--text-light);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+.ex-exit:active{background:#e0d5c5}
+/* Reading passage */
+.reading-passage{background:#f8f9fa;border-radius:12px;padding:16px 18px;font-size:17px;line-height:1.7;max-height:40vh;overflow-y:auto;text-align:left;margin-bottom:16px;border-left:4px solid var(--jessie)}
+.reading-passage .label{font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.ex-progress{height:5px;background:#e0dcd5;border-radius:3px;margin-bottom:24px;overflow:hidden}
+.ex-progress-fill{height:100%;border-radius:3px;transition:width .3s;background:var(--justin)}
+.ex-progress-fill.jessie{background:var(--jessie)}
+.question-area{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 4px}
+.question-prompt{font-size:20px;font-weight:600;line-height:1.5;margin-bottom:24px;max-width:100%}
+.question-context{font-size:14px;color:var(--text-light);margin-bottom:8px;line-height:1.6;text-align:left;background:#f8f9fa;border-radius:10px;padding:12px 16px;max-width:100%}
+.answer-area{width:100%;max-width:320px}
+.answer-input{width:100%;padding:14px 16px;font-size:18px;border:2px solid #ddd;border-radius:12px;text-align:center;outline:none;transition:border-color .2s;-webkit-appearance:none;background:#fff}
+.answer-input:focus{border-color:var(--justin)}
+.answer-input.jessie:focus{border-color:var(--jessie)}
+.option-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:320px}
+.option-btn{padding:16px 12px;font-size:16px;border:2px solid #e0dcd5;border-radius:12px;background:var(--card);cursor:pointer;transition:all .15s;text-align:center;font-weight:500}
+.option-btn:active{transform:scale(.96)}
+.option-btn.selected{border-color:var(--justin);background:#e8f4fd;color:var(--justin-dark)}
+.option-btn.selected.jessie{border-color:var(--jessie);background:var(--jessie-light);color:var(--jessie-dark)}
+.submit-btn{width:100%;max-width:320px;padding:15px;font-size:17px;font-weight:600;border:none;border-radius:12px;background:var(--justin);color:#fff;cursor:pointer;margin-top:16px;transition:opacity .15s}
+.submit-btn:active{opacity:.85}
+.submit-btn.jessie{background:var(--jessie)}
+.submit-btn:disabled{opacity:.5;pointer-events:none}
+.feedback{text-align:center;padding:12px;font-size:15px;font-weight:600;margin-top:12px;min-height:44px;line-height:1.5}
+.feedback.correct{color:var(--correct)}
+.feedback.wrong{color:var(--wrong)}
+/* Results */
+.result-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 20px;text-align:center;margin:20px 0}
+.result-emoji{font-size:56px;margin-bottom:12px}
+.result-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.result-subtitle{font-size:14px;color:var(--text-light);margin-bottom:18px}
+.result-stats{display:flex;justify-content:center;gap:24px;margin-bottom:20px}
+.result-stat{text-align:center}
+.result-stat-value{font-size:28px;font-weight:700}
+.result-stat-label{font-size:11px;color:var(--text-light)}
+.result-detail{text-align:left;font-size:13px;color:var(--text-light);margin-top:8px;line-height:1.8}
+.result-actions{display:flex;flex-direction:column;gap:10px}
+.result-btn{padding:14px;font-size:15px;font-weight:600;border:none;border-radius:12px;cursor:pointer;text-align:center;transition:opacity .15s}
+.result-btn:active{opacity:.85}
+.result-btn.primary{background:var(--justin);color:#fff}
+.result-btn.primary.jessie{background:var(--jessie)}
+.result-btn.secondary{background:#e8e4dd;color:var(--text)}
+/* Empty state */
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-light);text-align:center;padding:20px}
+.empty-state .emoji{font-size:48px;margin-bottom:12px}
+.empty-state p{font-size:14px;line-height:1.6}
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2c3e50;color:#fff;padding:12px 24px;border-radius:24px;font-size:14px;z-index:100;animation:toastIn .3s ease;pointer-events:none}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+/* Score badge on subject card */
+.score-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:10px}
+.score-badge.good{background:#e8f8f0;color:var(--correct)}
+.score-badge.ok{background:#fef5e7;color:var(--gold)}
+.score-badge.poor{background:#fdedec;color:var(--wrong)}
+.score-badge.new{background:#f0f0f0;color:var(--text-light)}
+/* History */
+.history-list{display:flex;flex-direction:column;gap:10px}
+.history-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;cursor:pointer;transition:transform .12s}
+.history-card:active{transform:scale(.98)}
+.history-date{font-size:12px;color:var(--text-light);margin-bottom:4px}
+.history-subject{font-size:15px;font-weight:600;margin-bottom:6px}
+.history-score-row{display:flex;align-items:center;gap:8px}
+.history-pct{font-size:18px;font-weight:700}
+.history-fraction{font-size:13px;color:var(--text-light)}
+.history-detail{font-size:13px;color:var(--text-light);margin-top:8px;line-height:1.8;padding:10px;background:#faf9f6;border-radius:8px}
+.history-empty{text-align:center;padding:40px 20px;color:var(--text-light)}
+.history-empty .emoji{font-size:48px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ===== DATA: Question Banks =====
+const QUESTION_BANKS = {
+
+  // ===== JESSIE - ENGLISH (EXPANDED) =====
+  'jessie-past-tense': {
+    name: 'Past Tense 過去式',
+    desc: '不規則動詞填空練習',
+    icon: '⏳',
+    color: '#9b59b6',
+    type: 'fill_blank',
+    questions: [
+      {q:'Yesterday, I ___ (go) to the park.', a:'went'},
+      {q:'She ___ (eat) an apple this morning.', a:'ate'},
+      {q:'We ___ (see) a big rainbow after the rain.', a:'saw'},
+      {q:'He ___ (run) very fast in the race.', a:'ran'},
+      {q:'Mum ___ (buy) a new dress last week.', a:'bought'},
+      {q:'I ___ (bring) my book to school yesterday.', a:'brought'},
+      {q:'She ___ (catch) the ball with one hand.', a:'caught'},
+      {q:'They ___ (take) many photos at the zoo.', a:'took'},
+      {q:'Dad ___ (make) pancakes for breakfast.', a:'made'},
+      {q:'The cat ___ (sleep) on my bed last night.', a:'slept'},
+      {q:'I ___ (drink) a glass of milk before bed.', a:'drank'},
+      {q:'She ___ (write) a letter to her grandma.', a:'wrote'},
+      {q:'He ___ (sing) a beautiful song at the show.', a:'sang'},
+      {q:'We ___ (swim) in the sea last summer.', a:'swam'},
+      {q:'I ___ (give) my friend a birthday card.', a:'gave'},
+      {q:'The bird ___ (fly) away quickly.', a:'flew'},
+      {q:'Mum ___ (teach) me how to tie my shoes.', a:'taught'},
+      {q:'He ___ (break) his pencil in class.', a:'broke'},
+      {q:'I ___ (forget) my lunch box at home.', a:'forgot'},
+      {q:'She ___ (draw) a very nice picture.', a:'drew'},
+      {q:'They ___ (build) a sandcastle at the beach.', a:'built'},
+      {q:'I ___ (feel) very happy yesterday.', a:'felt'},
+      {q:'He ___ (read) three books last month.', a:'read'},
+      {q:'Mum ___ (put) the keys on the table.', a:'put'},
+      {q:'We ___ (have) a great time at the party.', a:'had'},
+      {q:'I ___ (do) my homework after dinner.', a:'did'},
+      {q:'She ___ (say) sorry to her brother.', a:'said'},
+      {q:'The phone ___ (ring) during dinner.', a:'rang'},
+      {q:'He ___ (sit) at the front of the class.', a:'sat'},
+      {q:'I ___ (think) the movie was very funny.', a:'thought'},
+      {q:'Last Friday, Lily ___ (hear) a small cry behind the bin.', a:'heard'},
+      {q:'She ___ (find) a little puppy hiding there.', a:'found'},
+      {q:'Dad ___ (come) to see what was happening.', a:'came'},
+      {q:'Lily ___ (feel) so excited when Dad said yes.', a:'felt'},
+      {q:'Tina ___ (spin) around three times and flew up!', a:'spun'},
+      {q:'She ___ (not believe) her eyes when the shoes glowed.', a:'did not believe'},
+      {q:'Tommy the turtle ___ (find) a pair of wings.', a:'found'},
+      {q:'He ___ (put) the wings on but they did not work.', a:'put'},
+      {q:'Bella ___ (come) to help her friend Tommy.', a:'came'},
+      {q:'Last Tuesday, Tom ___ (catch) a big fish.', a:'caught'},
+      {q:'Grandma ___ (give) Tina red dancing shoes.', a:'gave'},
+      {q:'The fairy ___ (teach) Suki to talk to animals.', a:'taught'},
+      {q:'Suki ___ (throw) a coin into the wishing well.', a:'threw'},
+      {q:'The water ___ (begin) to glow with magic light.', a:'began'},
+      {q:'Ben ___ (take) off his jacket to wrap the kitten.', a:'took'},
+      {q:'He ___ (run) all the way home with the kitten.', a:'ran'},
+      {q:'The older boys ___ (laugh) at Tom in the playground.', a:'laughed'},
+      {q:'Lily ___ (shout) at them to stop being mean.', a:'shouted'},
+      {q:'I ___ (introduce) the new girl to all my friends.', a:'introduced'},
+      {q:'Last Monday, a new girl ___ (join) our class.', a:'joined'},
+      {q:'We ___ (play) together on the field until it was dark.', a:'played'},
+      {q:'Peter ___ (get) up at seven o\'clock this morning.', a:'got'},
+      {q:'He ___ (eat) toast and drank milk for breakfast.', a:'ate'},
+      {q:'Sally ___ (wear) her new red dress to the party.', a:'wore'},
+      {q:'All her friends ___ (like) the dress very much.', a:'liked'},
+      {q:'Ben and his dad ___ (go) fishing last weekend.', a:'went'},
+      {q:'They ___ (sit) by the river for two hours.', a:'sat'},
+      {q:'Mum ___ (cook) the fish for dinner that night.', a:'cooked'},
+      {q:'Last night, I ___ (hear) a strange noise outside.', a:'heard'},
+      {q:'I ___ (hide) under my blanket because I was scared.', a:'hid'},
+      {q:'She ___ (tell) her mum about the magic garden.', a:'told'},
+      {q:'Dad ___ (drive) us to the beach last Sunday.', a:'drove'},
+      {q:'I ___ (wake) up very early this morning.', a:'woke'},
+      {q:'The children ___ (sing) Happy Birthday to Grandma.', a:'sang'},
+    ]
+  },
+
+  'jessie-prepositions': {
+    name: 'Prepositions 介詞',
+    desc: 'in / on / at / between / behind',
+    icon: '📍',
+    color: '#8e44ad',
+    type: 'choice',
+    questions: [
+      {q:'The book is ___ the table.', opts:['in','on','at','under'], a:'on'},
+      {q:'She was born ___ 2016.', opts:['in','on','at','under'], a:'in'},
+      {q:'School starts ___ 8:00 am.', opts:['in','on','at','under'], a:'at'},
+      {q:'My birthday is ___ 15th June.', opts:['in','on','at','under'], a:'on'},
+      {q:'The cat is hiding ___ the sofa.', opts:['in','on','at','under'], a:'under'},
+      {q:'I sit ___ Tom and Mary in class.', opts:['in','on','between','at'], a:'between'},
+      {q:'There is milk ___ the fridge.', opts:['in','on','at','under'], a:'in'},
+      {q:'The picture is ___ the wall.', opts:['in','on','at','under'], a:'on'},
+      {q:'We go swimming ___ summer.', opts:['in','on','at','under'], a:'in'},
+      {q:'The pencil rolled ___ the desk.', opts:['in','on','at','under'], a:'under'},
+      {q:'I do my homework ___ night.', opts:['in','on','at','between'], a:'at'},
+      {q:'The park is ___ the school and the shop.', opts:['in','on','at','between'], a:'between'},
+      {q:'Put the toys ___ the box.', opts:['in','on','at','under'], a:'in'},
+      {q:'She is standing ___ the door.', opts:['in','on','at','under'], a:'at'},
+      {q:'Dinner is ___ the table.', opts:['in','on','at','under'], a:'on'},
+      {q:'Lily sat ___ May and me in the classroom.', opts:['between','in front of','behind','next to'], a:'between'},
+      {q:'The shy girl sat ___ everyone and did not talk.', opts:['behind','in front of','next to','between'], a:'behind'},
+      {q:'Tom sat ___ Lily and told her a funny story.', opts:['in front of','behind','between','under'], a:'in front of'},
+      {q:'May sat ___ Lily and talked about games.', opts:['next to','in front of','behind','between'], a:'next to'},
+      {q:'The kitten was hiding ___ the rubbish bin.', opts:['behind','in front of','between','on'], a:'behind'},
+      {q:'Tommy sits ___ the big rock every morning.', opts:['on','in','at','under'], a:'on'},
+      {q:'Bella flies ___ Tommy every day.', opts:['above','under','behind','between'], a:'above'},
+      {q:'Lily found a golden key ___ the old wall.', opts:['behind','in front of','next to','between'], a:'behind'},
+      {q:'The secret garden was ___ some tall trees.', opts:['behind','in front of','between','under'], a:'behind'},
+      {q:'I sat ___ my best friend in the school bus.', opts:['next to','behind','between','in front of'], a:'next to'},
+      {q:'The teacher\'s desk is ___ the classroom.', opts:['in front of','behind','between','next to'], a:'in front of'},
+      {q:'We played ___ the field after school.', opts:['on','in','at','under'], a:'on'},
+      {q:'___ Christmas, we always visit Grandma.', opts:['At','In','On','By'], a:'At'},
+      {q:'I was born ___ a cold winter morning.', opts:['on','in','at','by'], a:'on'},
+      {q:'The plane flew ___ the clouds.', opts:['above','under','between','behind'], a:'above'},
+      {q:'There is a bridge ___ the river.', opts:['over','under','between','behind'], a:'over'},
+      {q:'The dog is sleeping ___ the warm blanket.', opts:['under','on','in','between'], a:'under'},
+      {q:'Please stand ___ me so I can see you.', opts:['in front of','behind','next to','between'], a:'in front of'},
+      {q:'There is a secret path ___ the two houses.', opts:['between','in front of','behind','next to'], a:'between'},
+      {q:'The mouse ran ___ the hole in the wall.', opts:['into','on','at','between'], a:'into'},
+      {q:'Mum is waiting ___ the bus stop.', opts:['at','in','on','under'], a:'at'},
+      {q:'We arrived ___ the airport very early.', opts:['at','in','on','to'], a:'at'},
+      {q:'The birds are singing ___ the tree.', opts:['in','on','at','under'], a:'in'},
+      {q:'There is someone knocking ___ the door.', opts:['at','in','on','under'], a:'at'},
+      {q:'He put the letter ___ the envelope.', opts:['in','on','at','between'], a:'in'},
+    ]
+  },
+
+  'jessie-wh-past': {
+    name: 'Wh-words + Past Tense',
+    desc: 'What/Where/When/Who/Why/How + Did',
+    icon: '❓',
+    color: '#6c3483',
+    type: 'choice',
+    questions: [
+      {q:'___ did you go yesterday? — I went to the library.', opts:['What','Where','When','Who'], a:'Where'},
+      {q:'___ did you eat for lunch? — I ate noodles.', opts:['What','Where','When','Who'], a:'What'},
+      {q:'___ did the movie start? — It started at 3:00.', opts:['What','Where','When','Who'], a:'When'},
+      {q:'___ did you go with? — I went with my mum.', opts:['What','Where','When','Who'], a:'Who'},
+      {q:'___ did you feel? — I felt very happy.', opts:['What','Where','How','Who'], a:'How'},
+      {q:'___ did she cry? — Because she lost her toy.', opts:['What','Where','Why','Who'], a:'Why'},
+      {q:'___ did Dad buy? — He bought some fruit.', opts:['What','Where','When','Who'], a:'What'},
+      {q:'___ did they go on Saturday? — To the beach.', opts:['What','Where','When','Why'], a:'Where'},
+      {q:'___ many apples did you eat? — I ate two.', opts:['What','Where','How','Why'], a:'How'},
+      {q:'___ did you come to school? — By bus.', opts:['What','Where','How','Why'], a:'How'},
+      {q:'___ called you last night? — Grandma called.', opts:['What','Where','When','Who'], a:'Who'},
+      {q:'___ did you wake up? — At 7 o\'clock.', opts:['What','Where','When','Why'], a:'When'},
+      {q:'___ book did you read? — I read the red one.', opts:['What','Which','When','Why'], a:'Which'},
+      {q:'___ did you put my bag? — On the chair.', opts:['What','Where','When','Who'], a:'Where'},
+      {q:'___ did the dog run away? — Because it was scared.', opts:['What','Where','When','Why'], a:'Why'},
+      {q:'___ found the puppy? — Lily did.', opts:['What','Where','When','Who'], a:'Who'},
+      {q:'___ did Ben wrap the kitten in? — His jacket.', opts:['What','Where','When','How'], a:'What'},
+      {q:'___ did Lily find the golden key? — Behind the wall.', opts:['What','Where','When','Who'], a:'Where'},
+      {q:'___ did the fairy come out? — Suki\'s wish was kind.', opts:['What','Where','When','Why'], a:'Why'},
+      {q:'___ gave Tina the magic shoes? — Her grandma.', opts:['What','Where','When','Who'], a:'Who'},
+      {q:'___ did she feel? — Very happy.', opts:['What','Where','How','Why'], a:'How'},
+      {q:'___ did Tommy find the wings? — Near the pond.', opts:['What','Where','When','How'], a:'Where'},
+      {q:'___ helped Tommy? — Bella did.', opts:['What','Where','When','Who'], a:'Who'},
+      {q:'___ colour were the roses?', opts:['What','Where','When','Who'], a:'What'},
+      {q:'___ many butterflies did Lily see?', opts:['What','Where','How','Why'], a:'How'},
+      {q:'___ did Lily shout at the boys?', opts:['What','Where','When','Why'], a:'Why'},
+      {q:'___ did the new girl sit? — Between May and me.', opts:['What','Where','When','Who'], a:'Where'},
+      {q:'___ was the new girl\'s name? — Lily.', opts:['What','Where','When','Who'], a:'What'},
+      {q:'___ did you do last Sunday? — I went fishing.', opts:['What','Where','When','Why'], a:'What'},
+      {q:'___ did the kitten look? — Small and wet.', opts:['What','Where','How','Who'], a:'How'},
+      {q:'___ old was Tom? — Nine years old.', opts:['What','Where','How','Who'], a:'How'},
+      {q:'___ did Sally wear? — A red dress.', opts:['What','Where','When','Who'], a:'What'},
+      {q:'___ pet did Tom have? — A dog named Max.', opts:['What','Where','When','Which'], a:'What'},
+      {q:'___ did you learn to swim? — My dad taught me.', opts:['What','Where','When','Who'], a:'Who'},
+      {q:'___ did they go after the park? — To the pond.', opts:['What','Where','When','How'], a:'Where'},
+    ]
+  },
+
+  'jessie-conjunctions': {
+    name: 'Conjunctions 連接詞',
+    desc: 'because / so / and / but',
+    icon: '🔗',
+    color: '#a569bd',
+    type: 'choice',
+    questions: [
+      {q:'I was hungry, ___ I ate a sandwich.', opts:['because','and','but','so'], a:'so'},
+      {q:'She likes apples ___ oranges.', opts:['because','and','but','so'], a:'and'},
+      {q:'He is small, ___ he is very strong.', opts:['because','and','but','so'], a:'but'},
+      {q:'I stayed home ___ it was raining.', opts:['because','and','but','so'], a:'because'},
+      {q:'Mum was tired, ___ she went to bed early.', opts:['because','and','but','so'], a:'so'},
+      {q:'I want to go out, ___ it is too late.', opts:['because','and','but','so'], a:'but'},
+      {q:'She can sing ___ dance very well.', opts:['because','and','but','so'], a:'and'},
+      {q:'The baby cried ___ he was hungry.', opts:['because','and','but','so'], a:'because'},
+      {q:'I like dogs, ___ my sister likes cats.', opts:['because','and','but','so'], a:'but'},
+      {q:'It was cold, ___ I wore a jacket.', opts:['because','and','but','so'], a:'so'},
+      {q:'Tom ___ Jerry are best friends.', opts:['because','and','but','so'], a:'and'},
+      {q:'I cannot come ___ I am sick today.', opts:['because','and','but','so'], a:'because'},
+      {q:'Lily was scared, ___ she hid under the blanket.', opts:['because','and','but','so'], a:'so'},
+      {q:'Ben took the kitten home ___ it was cold and wet.', opts:['because','and','but','so'], a:'because'},
+      {q:'Tommy was too heavy, ___ the wings did not work.', opts:['because','and','but','so'], a:'so'},
+      {q:'The fairy helped Suki ___ her wish was very kind.', opts:['because','and','but','so'], a:'because'},
+      {q:'Tina put on the shoes ___ danced in front of the mirror.', opts:['because','and','but','so'], a:'and'},
+      {q:'Lily shouted at the boys, ___ they walked away.', opts:['because','and','but','so'], a:'so'},
+      {q:'I wanted to help, ___ I did not know how.', opts:['because','and','but','so'], a:'but'},
+      {q:'Tommy was a turtle ___ he wanted to fly.', opts:['because','and','but','so'], a:'but'},
+      {q:'It was raining hard, ___ we stayed inside.', opts:['because','and','but','so'], a:'so'},
+      {q:'Sally danced ___ sang at the party.', opts:['because','and','but','so'], a:'and'},
+      {q:'The cat was hungry, ___ Mum gave it fish.', opts:['because','and','but','so'], a:'so'},
+      {q:'Peter likes English ___ it is his favourite subject.', opts:['because','and','but','so'], a:'because'},
+      {q:'Mary wanted ice-cream, ___ her mum said no.', opts:['because','and','but','so'], a:'but'},
+      {q:'Ben caught three fish ___ his dad caught five.', opts:['because','and','but','so'], a:'and'},
+      {q:'The shoes were magic, ___ Tina could fly!', opts:['because','and','but','so'], a:'so'},
+      {q:'Lily sat alone ___ she was new.', opts:['because','and','but','so'], a:'because'},
+      {q:'I like reading ___ my brother likes drawing.', opts:['because','and','but','so'], a:'but'},
+      {q:'The sun was shining, ___ we went to the beach.', opts:['because','and','but','so'], a:'so'},
+      {q:'Tom can run fast ___ he cannot swim.', opts:['because','and','but','so'], a:'but'},
+      {q:'We ran quickly ___ we were late for school.', opts:['because','and','but','so'], a:'because'},
+    ]
+  },
+
+  'jessie-irregular-verbs': {
+    name: 'Irregular Verbs 不規則動詞',
+    desc: '現在式→過去式對應 (51組)',
+    icon: '🔄',
+    color: '#bb8fce',
+    type: 'fill_blank',
+    questions: [
+      {q:'be 的過去式是？', a:'was/were'},
+      {q:'become 的過去式是？', a:'became'},
+      {q:'bite 的過去式是？', a:'bit'},
+      {q:'blow 的過去式是？', a:'blew'},
+      {q:'break 的過去式是？', a:'broke'},
+      {q:'catch 的過去式是？', a:'caught'},
+      {q:'come 的過去式是？', a:'came'},
+      {q:'do 的過去式是？', a:'did'},
+      {q:'drink 的過去式是？', a:'drank'},
+      {q:'eat 的過去式是？', a:'ate'},
+      {q:'fall 的過去式是？', a:'fell'},
+      {q:'feel 的過去式是？', a:'felt'},
+      {q:'fight 的過去式是？', a:'fought'},
+      {q:'find 的過去式是？', a:'found'},
+      {q:'fly 的過去式是？', a:'flew'},
+      {q:'forget 的過去式是？', a:'forgot'},
+      {q:'get 的過去式是？', a:'got'},
+      {q:'give 的過去式是？', a:'gave'},
+      {q:'go 的過去式是？', a:'went'},
+      {q:'have 的過去式是？', a:'had'},
+      {q:'hear 的過去式是？', a:'heard'},
+      {q:'hide 的過去式是？', a:'hid'},
+      {q:'know 的過去式是？', a:'knew'},
+      {q:'learn 的過去式是？', a:'learnt'},
+      {q:'leave 的過去式是？', a:'left'},
+      {q:'make 的過去式是？', a:'made'},
+      {q:'put 的過去式是？', a:'put'},
+      {q:'read 的過去式是？', a:'read'},
+      {q:'run 的過去式是？', a:'ran'},
+      {q:'say 的過去式是？', a:'said'},
+      {q:'see 的過去式是？', a:'saw'},
+      {q:'sell 的過去式是？', a:'sold'},
+      {q:'send 的過去式是？', a:'sent'},
+      {q:'sing 的過去式是？', a:'sang'},
+      {q:'sit 的過去式是？', a:'sat'},
+      {q:'sleep 的過去式是？', a:'slept'},
+      {q:'speak 的過去式是？', a:'spoke'},
+      {q:'spend 的過去式是？', a:'spent'},
+      {q:'steal 的過去式是？', a:'stole'},
+      {q:'swim 的過去式是？', a:'swam'},
+      {q:'take 的過去式是？', a:'took'},
+      {q:'teach 的過去式是？', a:'taught'},
+      {q:'tell 的過去式是？', a:'told'},
+      {q:'think 的過去式是？', a:'thought'},
+      {q:'throw 的過去式是？', a:'threw'},
+      {q:'understand 的過去式是？', a:'understood'},
+      {q:'wake 的過去式是？', a:'woke'},
+      {q:'wear 的過去式是？', a:'wore'},
+      {q:'win 的過去式是？', a:'won'},
+      {q:'write 的過去式是？', a:'wrote'},
+      {q:'cut 的過去式是？', a:'cut'},
+    ]
+  },
+
+  
+  'jessie-reading': {
+    name: 'Reading Quick Answer 速讀',
+    desc: '短文閱讀 + 選擇題',
+    icon: '📖',
+    color: '#d2b4de',
+    type: 'reading',
+    questions: [
+      {passage:'Last Monday, a new girl called Lily joined our class. She sat between May and me. At first, Lily was very quiet. During lunch, I saw Lily sitting alone. I went to her and said, "Come and sit with us!" May sat next to her and talked about games. Tom sat in front of her and told her a funny story. Lily laughed and was not quiet any more!',questions:[{q:'When did Lily join the class?',a:'Monday',opts:['Monday','Tuesday','Friday','Sunday']},{q:'Where did Lily sit?',a:'between May and me',opts:['behind everyone','between May and me','in front of Tom','next to the teacher']},{q:'What did Tom do?',a:'told her a funny story',opts:['gave her a gift','told her a funny story','sang a song','drew a picture']}]},
+      {passage:'Ben was walking home one rainy afternoon. He heard a tiny cry behind the rubbish bin near the bakery. He looked and found a small, wet kitten. It was shivering and looked very scared. Ben took off his jacket and wrapped the kitten inside. He ran all the way home. His mum said, "We can look after it until we find its owner."',questions:[{q:'Where did Ben find the kitten?',a:'behind the rubbish bin',opts:['inside the bakery','behind the rubbish bin','under a tree','in his bag']},{q:'How did the kitten look?',a:'small and wet',opts:['big and fluffy','small and wet','clean and happy','old and tired']},{q:'What did Ben wrap the kitten in?',a:'his jacket',opts:['a towel','his jacket','a blanket','his bag']}]},
+      {passage:'Lily walked to her grandmother\'s house last Saturday. She saw an old, grey wall behind some tall trees. She felt curious and walked closer. Behind the wall, she found a small, golden key. Near the wall, a tiny wooden door was hidden under some leaves. Lily put the key into the door. Click! Inside was the most beautiful garden. Colourful butterflies flew everywhere and the roses were bright red.',questions:[{q:'What did Lily find behind the wall?',a:'a golden key',opts:['a golden key','a silver coin','a magic book','a red flower']},{q:'Where was the door hidden?',a:'under some leaves',opts:['behind the trees','under some leaves','inside the wall','next to the road']},{q:'What colour were the roses?',a:'red',opts:['yellow','red','pink','white']}]},
+      {passage:'Tommy is a small green turtle who lives in a pond near the forest. Every morning, he swims to the big rock and sits in the sun. Last Tuesday, Tommy found a pair of tiny wings near the pond. He felt very excited. He put the wings on and tried to fly. But he was too heavy. The wings did not work. Tommy was sad. Then Bella the bird came to help. "You are the best swimmer!" she said. Tommy smiled.',questions:[{q:'What did Tommy find near the pond?',a:'a pair of wings',opts:['a pair of wings','a golden key','a magic shell','a new friend']},{q:'Why did the wings not work?',a:'he was too heavy',opts:['they were broken','he was too heavy','they were too small','he did not try']},{q:'Who helped Tommy?',a:'Bella',opts:['Suki','Bella','Tina','Lily']}]},
+      {passage:'Tina loves to dance. She goes to the dance studio every Saturday. Last month, her grandmother gave her a pair of red dancing shoes. Tina felt so happy! Last Sunday, Tina spun around three times and suddenly, she flew up into the air! She could not believe her eyes. The magic shoes were really magic! Now she teaches her little brother how to dance too.',questions:[{q:'Who gave Tina the shoes?',a:'her grandmother',opts:['her mother','her grandmother','her teacher','her friend']},{q:'What happened when Tina spun three times?',a:'she flew up',opts:['she fell down','she flew up','the shoes broke','she stopped']},{q:'How did Tina feel when she got the shoes?',a:'happy',opts:['sad','angry','happy','scared']}]},
+      {passage:'Suki lives in a small village. Every Sunday, she walks to the old wishing well behind her house. Last Sunday, she threw a coin into the water and closed her eyes. "I wish I could help the animals," she whispered. Suddenly, the water began to glow! A tiny fairy flew out of the well. "Your wish is very kind," the fairy said. The fairy taught Suki how to talk to animals. From that day on, Suki spent every afternoon helping animals in the forest.',questions:[{q:'Where is the wishing well?',a:'behind her house',opts:['in the forest','behind her house','near the river','at the park']},{q:'What did Suki wish for?',a:'to help the animals',opts:['to fly','to help the animals','to be rich','to make friends']},{q:'What came out of the well?',a:'a tiny fairy',opts:['a big fish','a tiny fairy','a golden coin','a magic frog']}]},
+      {passage:'Peter got up at seven o\'clock last Saturday. He ate toast and drank milk for breakfast. Then he walked to the park with his dog, Max. At the park, Peter saw his friends Tom and Mary. They played football for an hour. After that, they went to the pond to feed the ducks. Peter\'s mum came at twelve o\'clock with sandwiches. They all sat under a big tree and had a picnic. It was a wonderful day.',questions:[{q:'What time did Peter get up?',a:'seven o\'clock',opts:['six o\'clock','seven o\'clock','eight o\'clock','nine o\'clock']},{q:'What is Peter\'s dog called?',a:'Max',opts:['Buddy','Max','Rocky','Charlie']},{q:'What did they do at the pond?',a:'fed the ducks',opts:['swam','fed the ducks','caught fish','took photos']}]},
+      {passage:'One day, some older boys laughed at Tom because he could not catch the ball. Lily saw this and felt angry. She walked up to the boys and shouted, "Don\'t laugh at him! He is trying his best!" The boys were surprised. They said sorry to Tom and walked away. Tom said, "Thank you for helping me." Lily smiled. "That is what friends do," she said. From that day on, Lily and Tom became best friends.',questions:[{q:'Why did the boys laugh at Tom?',a:'he could not catch the ball',opts:['he fell down','he could not catch the ball','he was small','he cried']},{q:'How did Lily feel?',a:'angry',opts:['scared','angry','sad','happy']},{q:'What did Lily shout?',a:'Don\'t laugh at him',opts:['Go away','Don\'t laugh at him','Leave us alone','Stop playing']}]},
+    ]
+  },
+
+  // ===== JUSTIN - MATH =====
+  'justin-addition': {
+    name: 'Addition 加法練習',
+    desc: '兩位數加法 (不超過100)',
+    icon: '➕',
+    color: '#3498db',
+    type: 'math_gen',
+    generator: function() {
+      let a, b;
+      if (Math.random() < 0.5) {
+        // 2-digit no carry: ensure sum <= 99
+        a = Math.floor(Math.random()*80)+10;
+        b = Math.floor(Math.random()*Math.min(99-a, 40))+5;
+      } else {
+        // 2-digit with carry
+        a = Math.floor(Math.random()*50)+20;
+        b = Math.floor(Math.random()*40)+25;
+        if (a+b > 99) b -= (a+b-99);
+      }
+      return {q: `${a} + ${b} = ?`, a: String(a+b)};
+    }
+  },
+
+  'justin-subtraction': {
+    name: 'Subtraction 減法練習',
+    desc: '兩位數退位與不退位',
+    icon: '➖',
+    color: '#2980b9',
+    type: 'math_gen',
+    generator: function() {
+      const level = Math.random();
+      let a, b;
+      if (level < 0.5) {
+        a = Math.floor(Math.random()*80)+20;
+        b = Math.floor(Math.random()*(a-10))+10;
+      } else {
+        a = Math.floor(Math.random()*60)+30;
+        // Force borrowing sometimes
+        const aUnits = a % 10;
+        const bUnitsMax = Math.min(9, aUnits + Math.floor(Math.random()*5));
+        b = Math.floor(Math.random()*(a-10))+10;
+        // adjust to sometimes need borrowing
+        if (Math.random() < 0.6 && b%10 <= a%10 && b >= 20) b -= 1;
+      }
+      return {q: `${a} - ${b} = ?`, a: String(a-b)};
+    }
+  },
+
+  'justin-time': {
+    name: 'Time 時間練習',
+    desc: '整點 / 半小時 / 時間計算',
+    icon: '🕐',
+    color: '#1abc9c',
+    type: 'choice',
+    generator: function() {
+      // Helper: generate clock SVG
+      function clockSVG(h,m) {
+        const hourAngle = (h%12)*30 + (m===30?15:0);
+        const minAngle = m===30?180:0;
+        const toRad = d=>d*Math.PI/180;
+        const hx=(50+22*Math.sin(toRad(hourAngle))).toFixed(1);
+        const hy=(50-22*Math.cos(toRad(hourAngle))).toFixed(1);
+        const mx=(50+33*Math.sin(toRad(minAngle))).toFixed(1);
+        const my=(50-33*Math.cos(toRad(minAngle))).toFixed(1);
+        return `<svg width="100" height="100" viewBox="0 0 100 100" style="display:block;margin:0 auto 8px"><circle cx="50" cy="50" r="44" fill="#fefefe" stroke="#555" stroke-width="2.5"/><circle cx="50" cy="50" r="3" fill="#333"/><line x1="50" y1="9" x2="50" y2="16" stroke="#555" stroke-width="2.5"/><line x1="50" y1="84" x2="50" y2="91" stroke="#555" stroke-width="2.5"/><line x1="9" y1="50" x2="16" y2="50" stroke="#555" stroke-width="2.5"/><line x1="84" y1="50" x2="91" y2="50" stroke="#555" stroke-width="2.5"/><line x1="50" y1="50" x2="${hx}" y2="${hy}" stroke="#2c3e50" stroke-width="4.5" stroke-linecap="round"/><line x1="50" y1="50" x2="${mx}" y2="${my}" stroke="#7f8c8d" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+      }
+
+      const types = ['what_time','duration','after','before','clock_read'];
+      const type = types[Math.floor(Math.random()*types.length)];
+      let h, q, a, opts, svg;
+      const s = (arr)=>arr.sort(()=>Math.random()-0.5);
+
+      if (type === 'what_time') {
+        h = Math.floor(Math.random()*12)+1;
+        if (Math.random()<0.5) {
+          q=`時鐘長針指6、短針在${h}和${(h%12)+1}之間，是什麼時間？`;
+          a=`${h}:30`; opts=s([`${h}:00`,`${h}:30`,`${(h%12)+1}:00`,`${h-1||12}:30`]);
+        } else {
+          q=`時鐘長針指12、短針指${h}，是幾點？`;
+          a=`${h}:00`; opts=s([`${h-1||12}:00`,`${h}:00`,`${h}:30`,`${(h%12)+1}:00`]);
+        }
+      } else if (type === 'duration') {
+        h = Math.floor(Math.random()*10)+1;
+        if (Math.random()<0.35) {
+          q=`從 ${h}:00 到 ${h}:30，過了多長時間？`; a='半小時';
+          opts=s(['半小時','1小時','30分鐘','1小時半']);
+        } else {
+          const dh=Math.floor(Math.random()*2)+1;
+          q=`從 ${h}:00 到 ${h+dh}:00，過了幾小時？`; a=`${dh}小時`;
+          const all=Array.from({length:4},(_,i)=>`${Math.max(1,dh-1+i)}小時`);
+          opts=[...new Set(all)].slice(0,4); if(!opts.includes(a))opts[0]=a; opts=s(opts);
+        }
+      } else if (type === 'after') {
+        h=Math.floor(Math.random()*10)+1;
+        if (Math.random()<0.4) {
+          q=`現在是 ${h}:00，過了半小時是幾點？`; a=`${h}:30`;
+          opts=s([`${h}:00`,`${h}:30`,`${(h%12)+1}:00`,`${(h%12)+1}:30`]);
+        } else {
+          const dh=Math.floor(Math.random()*2)+1;
+          q=`現在是 ${h}:00，過了 ${dh} 小時是幾點？`; a=`${h+dh}:00`;
+          const all=Array.from({length:4},(_,i)=>`${Math.max(1,h+dh-2+i)}:00`);
+          opts=[...new Set(all)].slice(0,4); if(!opts.includes(a))opts[0]=a; opts=s(opts);
+        }
+      } else if (type === 'before') {
+        h=Math.floor(Math.random()*9)+3; // 3-11 so going back doesn\'t go negative too often
+        const backHour = (h-1+12)%12||12;
+        const backHalf = (h===1)?'12:30':`${h-1}:30`;
+        if (Math.random()<0.45) {
+          q=`現在是 ${h}:00，半小時前是幾點？`; a=backHalf;
+          opts=s([`${h}:00`,`${h}:30`,backHalf,`${backHour}:00`]);
+        } else {
+          q=`現在是 ${h}:00，1 小時前是幾點？`; a=`${backHour}:00`;
+          opts=s([`${h}:00`,backHalf,`${backHour}:00`,`${backHour}:30`]);
+        }
+      } else if (type === 'clock_read') {
+        h=Math.floor(Math.random()*12)+1;
+        const m=Math.random()<0.5?0:30;
+        const display=m===0?`${h}:00`:`${h}:30`;
+        svg=clockSVG(h,m);
+        q=`看下面的時鐘，現在是幾點？`;
+        a=display;
+        if(m===0) opts=s([`${h}:00`,`${h}:30`,`${h-1||12}:00`,`${(h%12)+1}:00`]);
+        else opts=s([`${h}:30`,`${h}:00`,`${(h%12)+1}:00`,`${(h%12)+1}:30`]);
+      }
+      if(!opts.includes(a)){const idx=Math.floor(Math.random()*4);opts[idx]=a;}
+      return {q,a,opts,svg:svg||''};
+    }
+  },
+
+  'justin-word-problems': {
+    name: 'Word Problems 應用題',
+    desc: '關鍵詞辨識 + 計算',
+    icon: '📝',
+    color: '#16a085',
+    type: 'math_gen',
+    generator: function() {
+      const types = ['add','sub','mixed'];
+      const type = types[Math.floor(Math.random()*types.length)];
+      let q, a;
+
+      const templates = {
+        add: [
+          {t: '小明有 __A__ 粒糖，小美有 __B__ 粒糖，他們共有多少粒糖？', calc: (a,b)=>a+b},
+          {t: '書架上有 __A__ 本書，老師又放了 __B__ 本上去，書架上一共有多少本書？', calc: (a,b)=>a+b},
+          {t: '公園裡有 __A__ 個小朋友在玩，後來又來了 __B__ 個，現在公園裡總共有多少個小朋友？', calc: (a,b)=>a+b},
+          {t: '籃子裡有 __A__ 個蘋果，媽媽又買了 __B__ 個，一共有多少個蘋果？', calc: (a,b)=>a+b},
+          {t: 'Justin 做了 __A__ 題數學，又做了 __B__ 題英文，他一共做了多少題？', calc: (a,b)=>a+b},
+        ],
+        sub: [
+          {t: '小明有 __A__ 粒糖，他吃了 __B__ 粒，還餘下多少粒？', calc: (a,b)=>a-b},
+          {t: '圖書館有 __A__ 本書，借出了 __B__ 本，還餘下多少本？', calc: (a,b)=>a-b},
+          {t: '媽媽有 __A__ 元，買菜用了 __B__ 元，還餘下多少元？', calc: (a,b)=>a-b},
+          {t: '停車場有 __A__ 架車，開走了 __B__ 架，還有多少架？', calc: (a,b)=>a-b},
+        ],
+      };
+
+      if (type === 'add') {
+        const t = templates.add[Math.floor(Math.random()*templates.add.length)];
+        const n1 = Math.floor(Math.random()*30)+5;
+        const n2 = Math.floor(Math.random()*30)+5;
+        q = t.t.replace('__A__', n1).replace('__B__', n2);
+        a = String(t.calc(n1, n2));
+      } else if (type === 'sub') {
+        const t = templates.sub[Math.floor(Math.random()*templates.sub.length)];
+        const n1 = Math.floor(Math.random()*40)+20;
+        const n2 = Math.floor(Math.random()*(n1-3))+3;
+        q = t.t.replace('__A__', n1).replace('__B__', n2);
+        a = String(t.calc(n1, n2));
+      } else {
+        // mixed - sometimes add sometimes subtract
+        const all = [...templates.add, ...templates.sub];
+        const t = all[Math.floor(Math.random()*all.length)];
+        const n1 = Math.floor(Math.random()*40)+10;
+        const n2 = Math.floor(Math.random()*Math.min(n1, 25))+3;
+        q = t.t.replace('__A__', n1).replace('__B__', n2);
+        a = String(t.calc(n1, n2));
+      }
+      return {q, a};
+    }
+  },
+
+  'justin-number-concepts': {
+    name: 'Number Concepts 數字概念',
+    desc: '位值 / 比較 / 排序',
+    icon: '🔢',
+    color: '#2ecc71',
+    type: 'choice',
+    generator: function() {
+      const types = ['place_value','compare','sequence'];
+      const type = types[Math.floor(Math.random()*types.length)];
+      let q, a, opts;
+
+      if (type === 'place_value') {
+        const n = Math.floor(Math.random()*900)+100;
+        const digit = Math.floor(Math.random()*3);
+        const labels = ['百位', '十位', '個位'];
+        const vals = [Math.floor(n/100), Math.floor((n%100)/10), n%10];
+        const label = labels[digit];
+        a = String(vals[digit]);
+        q = `數字 ${n} 的${label}數字是多少？`;
+        // Generate wrong options from the other digits
+        const wrongs = vals.filter((v,i)=>i!==digit).map(String);
+        opts = [a, ...wrongs, String(vals[digit]+1)];
+        opts = [...new Set(opts)].slice(0,4);
+        opts = opts.sort(()=>Math.random()-0.5);
+      } else if (type === 'compare') {
+        const n1 = Math.floor(Math.random()*900)+10;
+        const n2 = Math.floor(Math.random()*900)+10;
+        q = `${n1} 和 ${n2}，哪個比較大？`;
+        a = String(Math.max(n1, n2));
+        const smaller = String(Math.min(n1, n2));
+        opts = [a, smaller, String(Math.max(n1,n2)-10), String(Math.max(n1,n2)+5)];
+        opts = [...new Set(opts)].slice(0,4);
+        opts = opts.sort(()=>Math.random()-0.5);
+      } else {
+        const start = Math.floor(Math.random()*50)+1;
+        const step = [2,5,10][Math.floor(Math.random()*3)];
+        const terms = 3 + Math.floor(Math.random()*3);
+        const arr = [];
+        for (let i=0; i<terms; i++) arr.push(start + i*step);
+        const missingIdx = Math.floor(Math.random()*terms);
+        const arrDisplay = arr.map((v,i) => i===missingIdx ? '___' : v);
+        q = `請填上 missing number: ${arrDisplay.join(', ')}`;
+        a = String(arr[missingIdx]);
+        opts = [a, String(arr[missingIdx]+step), String(arr[missingIdx]-step), String(arr[missingIdx]+step*2)];
+        opts = [...new Set(opts)].slice(0,4);
+        opts = opts.sort(()=>Math.random()-0.5);
+      }
+      if (!opts.includes(a)) { const idx=Math.floor(Math.random()*Math.min(4,opts.length)); opts[idx]=a; }
+      return {q, a, opts};
+    }
+  },
+
+  'justin-currency': {
+    name: 'Money 貨幣練習',
+    desc: '港元計算 / 找續',
+    icon: '💰',
+    color: '#f39c12',
+    type: 'choice',
+    generator: function() {
+      const types = ['total','change','coins'];
+      const type = types[Math.floor(Math.random()*types.length)];
+      let q, a, opts;
+      const shuffleArr = (arr) => arr.sort(()=>Math.random()-0.5);
+
+      if (type === 'total') {
+        const price = Math.floor(Math.random()*20)+3;
+        const price2 = Math.floor(Math.random()*15)+2;
+        q = `小明買了一支筆 $${price} 和一個擦膠 $${price2}，共付多少元？`;
+        a = `$${price+price2}`;
+        const wrongs = [`$${price+price2-1}`,`$${price+price2+1}`,`$${price+price2-2}`].filter(v=>parseInt(v.slice(1))>0);
+        opts = shuffleArr([a,...wrongs.slice(0,3)]);
+      } else if (type === 'change') {
+        const price = Math.floor(Math.random()*8)+2;
+        const paid = price + [5,10,20][Math.floor(Math.random()*3)];
+        q = `買了一本 $${price} 的簿，付了 $${paid}，應找回多少元？`;
+        a = `$${paid-price}`;
+        const wrongs = [`$${paid-price-1}`,`$${paid-price+1}`,`$${paid-price+2}`].filter(v=>parseInt(v.slice(1))>=0);
+        opts = shuffleArr([a,...wrongs.slice(0,3)]);
+      } else {
+        const coin1 = [1,2,5,10][Math.floor(Math.random()*4)];
+        const count1 = Math.floor(Math.random()*4)+1;
+        const coin2 = [2,5,1,10][Math.floor(Math.random()*4)];
+        const count2 = Math.floor(Math.random()*3)+1;
+        const total = coin1*count1 + coin2*count2;
+        q = `有 $${coin1} 硬幣 ${count1} 個 和 $${coin2} 硬幣 ${count2} 個，共有多少元？`;
+        a = `$${total}`;
+        const wrongs = [`$${total-1}`,`$${total+1}`,`$${total-2}`].filter(v=>parseInt(v.slice(1))>0);
+        opts = shuffleArr([a,...wrongs.slice(0,3)]);
+      }
+      if (!opts.includes(a)) { const idx=Math.floor(Math.random()*4); opts[idx]=a; }
+      return {q, a, opts};
+    }
+  },
+
+  'justin-calendar': {
+    name: 'Calendar 日期練習',
+    desc: '星期 / 月份 / 日曆',
+    icon: '📅',
+    color: '#e67e22',
+    type: 'choice',
+    generator: function() {
+      const weekdays = ['星期一','星期二','星期三','星期四','星期五','星期六','星期日'];
+      const shortDays = ['一','二','三','四','五','六','日'];
+      const months31 = [1,3,5,7,8,10,12];
+      const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+      const s = (arr)=>arr.sort(()=>Math.random()-0.5);
+
+      // Helper: generate calendar grid HTML for a given month
+      function calGrid(year, month) {
+        const firstDay = new Date(year, month-1, 1).getDay(); // 0=Sun
+        const daysInMonth = month===2?28:(months31.includes(month)?31:30);
+        let html = '<table style="border-collapse:collapse;margin:0 auto 8px;font-size:13px;width:100%;max-width:300px"><tr style="background:#f0ebe0">';
+        ['日','一','二','三','四','五','六'].forEach(d=>{html+=`<th style="padding:4px;text-align:center;font-size:12px">${d}</th>`;});
+        html+='</tr><tr>';
+        for(let i=0;i<firstDay;i++) html+='<td style="padding:6px;text-align:center;color:#ccc"></td>';
+        for(let d=1;d<=daysInMonth;d++){
+          const dow=(firstDay+d-1)%7;
+          const isSun=dow===0?'color:#e74c3c;font-weight:700':'';
+          html+=`<td style="padding:6px;text-align:center;${isSun}">${d}</td>`;
+          if(dow===6&&d<daysInMonth) html+='</tr><tr>';
+        }
+        html+='</tr></table>';
+        return html;
+      }
+
+      const types = ['days_after','days_before','month_days','months','calendar_read'];
+      const type = types[Math.floor(Math.random()*types.length)];
+      let q, a, opts, cal;
+
+      if (type === 'days_after' || type === 'days_before') {
+        const todayIdx = Math.floor(Math.random()*7);
+        const daysDelta = Math.floor(Math.random()*4)+1;
+        const isAfter = type==='days_after';
+        const targetIdx = isAfter ? (todayIdx+daysDelta)%7 : (todayIdx-daysDelta+7)%7;
+        q = isAfter ? `今天是${weekdays[todayIdx]}，${daysDelta} 天後是星期幾？`
+                     : `今天是${weekdays[todayIdx]}，${daysDelta} 天前是星期幾？`;
+        a = weekdays[targetIdx];
+        opts = [a];
+        for (let i=0;i<3;i++){let w=weekdays[Math.floor(Math.random()*7)];while(opts.includes(w))w=weekdays[Math.floor(Math.random()*7)];opts.push(w);}
+        opts = s(opts);
+      } else if (type === 'month_days') {
+        const midx = Math.floor(Math.random()*12);
+        const m = midx+1;
+        const dim = m===2?28:(months31.includes(m)?31:30);
+        q = `${monthNames[midx]}有幾天？`; a=`${dim}天`;
+        opts=s(['28天','30天','31天','29天'].filter(o=>o!==a).slice(0,3).concat(a));
+      } else if (type === 'months') {
+        const months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        const midx=Math.floor(Math.random()*10);
+        if (Math.random()<0.5) {
+          q=`${months[midx]}的下一個月是幾月？`; a=months[midx+1];
+          opts=[months[midx],a,months[(midx+2)%12],months[(midx-1+12)%12]];
+        } else {
+          q=`${months[midx+1]}的上一個月是幾月？`; a=months[midx];
+          opts=[months[midx+1],a,months[(midx+2)%12],months[(midx-1+12)%12]];
+        }
+        opts=s(opts);
+      } else if (type === 'calendar_read') {
+        // Show a calendar and ask what day a specific date is
+        const m = Math.floor(Math.random()*12)+1;
+        const year = 2026;
+        const firstDay = new Date(year, m-1, 1).getDay();
+        const daysInMonth = m===2?28:(months31.includes(m)?31:30);
+        // Pick a date in the middle of the month
+        const date = Math.floor(Math.random()*(daysInMonth-4))+3;
+        const dateDow = (firstDay+date-1)%7;
+        cal = calGrid(year, m);
+        q = `看下面的日曆，${m}月${date}日是星期幾？`;
+        a = weekdays[dateDow];
+        opts = [a];
+        for (let i=0;i<3;i++){let w=weekdays[Math.floor(Math.random()*7)];while(opts.includes(w))w=weekdays[Math.floor(Math.random()*7)];opts.push(w);}
+        opts = s(opts);
+      }
+      if (!opts.includes(a)){const idx=Math.floor(Math.random()*4);opts[idx]=a;}
+      return {q, a, opts, svg:cal||''};
+    }
+  },
+
+  'justin-speed-math': {
+    name: 'Speed Math 速算練習',
+    desc: '20以內加減快速反應',
+    icon: '⚡',
+    color: '#27ae60',
+    type: 'math_gen',
+    generator: function() {
+      const isAdd = Math.random() < 0.55;
+      if (isAdd) {
+        const a = Math.floor(Math.random()*18)+1;
+        const b = Math.floor(Math.random()*(20-a))+1;
+        return {q: `${a} + ${b} = ?`, a: String(a+b)};
+      } else {
+        const a = Math.floor(Math.random()*19)+2;
+        const b = Math.floor(Math.random()*(a-1))+1;
+        return {q: `${a} - ${b} = ?`, a: String(a-b)};
+      }
+    }
+  },
+};
+
+// ===== APP STATE =====
+const PROFILES = {
+  jessie: { name: 'Jessie', grade: 'P2 嘉諾撒聖心', avatar: 'J', color: 'jessie', subjects: ['jessie-past-tense','jessie-prepositions','jessie-wh-past','jessie-conjunctions','jessie-irregular-verbs','jessie-reading'] },
+  justin: { name: 'Justin', grade: 'P1 蘇浙小學', avatar: 'J', color: 'justin', subjects: ['justin-addition','justin-subtraction','justin-speed-math','justin-word-problems','justin-currency','justin-calendar','justin-time','justin-number-concepts'] }
+};
+
+let state = {
+  profile: null,
+  screen: 'profile', // profile | dashboard | exercise | result | history
+  currentSubject: null,
+  currentQuestions: [],
+  currentIndex: 0,
+  answers: [],
+  score: 0,
+};
+
+// ===== LOCAL STORAGE =====
+function loadScores() {
+  try { return JSON.parse(localStorage.getItem('studybuddy_scores') || '{}'); }
+  catch(e) { return {}; }
+}
+function saveScores(scores) {
+  localStorage.setItem('studybuddy_scores', JSON.stringify(scores));
+}
+function getSubjectScore(subjectId) {
+  const scores = loadScores();
+  const s = scores[subjectId];
+  if (!s) return { total: 0, correct: 0, pct: null, sessions: 0 };
+  return { ...s, pct: s.total > 0 ? Math.round(s.correct/s.total*100) : null };
+}
+function recordSession(subjectId, sessionCorrect, sessionTotal, wrongAnswers) {
+  const scores = loadScores();
+  if (!scores[subjectId]) scores[subjectId] = { total: 0, correct: 0, sessions: 0 };
+  scores[subjectId].total += sessionTotal;
+  scores[subjectId].correct += sessionCorrect;
+  scores[subjectId].sessions += 1;
+  if (!scores[subjectId].history) scores[subjectId].history = [];
+  scores[subjectId].history.push({
+    date: new Date().toISOString().slice(0,10),
+    correct: sessionCorrect,
+    total: sessionTotal,
+    wrongAnswers: wrongAnswers || []
+  });
+  if (scores[subjectId].history.length > 20) scores[subjectId].history = scores[subjectId].history.slice(-20);
+  saveScores(scores);
+}
+
+// ===== RENDER =====
+const app = document.getElementById('app');
+
+function render() {
+  if (state.screen === 'profile') renderProfileScreen();
+  else if (state.screen === 'dashboard') renderDashboard();
+  else if (state.screen === 'exercise') renderExercise();
+  else if (state.screen === 'result') renderResult();
+  else if (state.screen === 'history') renderHistory();
+}
+
+function renderProfileScreen() {
+  const html = `
+    <div class="screen active" id="screen-profile">
+      <div class="header">
+        <h1>📚 StudyBuddy</h1>
+        <div class="subtitle">選擇練習對象</div>
+      </div>
+      <div class="profile-grid">
+        <div class="profile-card jessie" onclick="selectProfile('jessie')">
+          <div class="profile-avatar">J</div>
+          <div class="profile-name">Jessie</div>
+          <div class="profile-grade">P2 · English</div>
+        </div>
+        <div class="profile-card justin" onclick="selectProfile('justin')">
+          <div class="profile-avatar">J</div>
+          <div class="profile-name">Justin</div>
+          <div class="profile-grade">P1 · 數學</div>
+        </div>
+      </div>
+    </div>
+  `;
+  app.innerHTML = html;
+}
+
+function renderDashboard() {
+  const p = PROFILES[state.profile];
+  const subjects = p.subjects.map(sid => {
+    const bank = QUESTION_BANKS[sid];
+    const score = getSubjectScore(sid);
+    let scoreHtml = '';
+    if (score.sessions === 0) {
+      scoreHtml = '<span class="score-badge new">新</span>';
+    } else if (score.pct >= 80) {
+      scoreHtml = `<span class="score-badge good">${score.pct}% ✅</span>`;
+    } else if (score.pct >= 50) {
+      scoreHtml = `<span class="score-badge ok">${score.pct}% ⚠️</span>`;
+    } else {
+      scoreHtml = `<span class="score-badge poor">${score.pct}%</span>`;
+    }
+    const iconBg = bank.color;
+    return `
+      <div class="subject-card" onclick="startExercise('${sid}')">
+        <div class="subject-icon" style="background:${iconBg}22;color:${iconBg}">${bank.icon}</div>
+        <div class="subject-info">
+          <div class="subject-name">${bank.name}</div>
+          <div class="subject-desc">${bank.desc}</div>
+        </div>
+        <div>${scoreHtml}</div>
+      </div>
+    `;
+  }).join('');
+
+  app.innerHTML = `
+    <div class="screen active">
+      <div class="dash-header">
+        <div class="dash-avatar ${p.color}" onclick="switchProfile()">${p.avatar}</div>
+        <div class="dash-info">
+          <div class="dash-name">${p.name}</div>
+          <div class="dash-grade">${p.grade}</div>
+        </div>
+        <div class="dash-back" onclick="switchProfile()" title="切換">↩️</div>
+      </div>
+      <div class="section-title">選擇練習科目</div>
+      <div class="subject-list">${subjects}</div>
+      <div style="margin-top:16px;text-align:center">
+        <button class="result-btn primary ${p.color}" onclick="showHistory()" style="width:100%;max-width:320px">📊 學習記錄</button>
+      </div>
+      <div style="margin-top:8px;text-align:center">
+        <button class="result-btn primary ${p.color}" onclick="startChallenge()" style="width:100%;max-width:320px;background:${p.color==='jessie'?'#8e44ad':'#e67e22'}">🏆 綜合挑戰 (25題)</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderExercise() {
+  const isChallenge = state.currentSubject === 'challenge';
+  const bank = isChallenge ? null : QUESTION_BANKS[state.currentSubject];
+  const q = state.currentQuestions[state.currentIndex];
+  const p = PROFILES[state.profile];
+  const themeClass = p.color === 'jessie' ? 'jessie' : '';
+  const progressPct = Math.round((state.currentIndex) / state.currentQuestions.length * 100);
+  const totalQuestions = state.currentQuestions.length;
+  
+  const qType = isChallenge ? (q._type || 'math_gen') : bank.type;
+  const title = isChallenge ? '🏆 綜合挑戰' : `${bank.icon} ${bank.name}`;
+  const subBadge = isChallenge && q._subjectId ? 
+    `<span style="font-size:11px;color:var(--text-light);background:#f0ebe0;padding:2px 8px;border-radius:8px">${QUESTION_BANKS[q._subjectId]?.icon||''} ${QUESTION_BANKS[q._subjectId]?.name||''}</span>` : '';
+
+  let answerArea = '';
+  if (qType === 'reading') {
+    const opts = q.opts.map(o => `
+      <button class="option-btn ${themeClass}" onclick="selectOption('${o.replace(/'/g,"\\'")}')" id="opt-${o.replace(/[^a-zA-Z0-9]/g,'_')}">${o}</button>
+    `).join('');
+    answerArea = `
+      <div class="option-grid">${opts}</div>
+      <button class="submit-btn ${themeClass}" id="submit-btn" disabled onclick="submitAnswer()">確認答案</button>
+    `;
+  } else if (qType === 'choice') {
+    const opts = q.opts.map(o => `
+      <button class="option-btn ${themeClass}" onclick="selectOption('${o.replace(/'/g,"\\'")}')" id="opt-${o.replace(/[^a-zA-Z0-9]/g,'_')}">${o}</button>
+    `).join('');
+    answerArea = `
+      <div class="option-grid">${opts}</div>
+      <button class="submit-btn ${themeClass}" id="submit-btn" disabled onclick="submitAnswer()">確認答案</button>
+    `;
+  } else {
+    answerArea = `
+      <input class="answer-input ${themeClass}" type="text" id="answer-input" placeholder="輸入答案..." autocomplete="off" onkeydown="if(event.key==='Enter')submitAnswer()">
+      <button class="submit-btn ${themeClass}" id="submit-btn" onclick="submitAnswer()">確認答案</button>
+    `;
+  }
+
+  let contextHtml = '';
+  if (q.passage) {
+    contextHtml = `<div class="reading-passage"><div class="label">📖 Read the passage</div>${q.passage}</div>`;
+  }
+  if (q.svg) {
+    contextHtml += q.svg;
+  }
+
+  app.innerHTML = `
+    <div class="screen active">
+      <div class="ex-header">
+        <div class="ex-title">${title} ${subBadge}</div>
+        <div class="ex-counter">第 ${state.currentIndex+1} / ${totalQuestions} 題</div>
+        <button class="ex-exit" onclick="exitExercise()" title="退出練習">✕</button>
+      </div>
+      <div class="ex-progress">
+        <div class="ex-progress-fill ${themeClass}" style="width:${progressPct}%"></div>
+      </div>
+      <div class="question-area">
+        ${contextHtml}
+        <div class="question-prompt">${q.q}</div>
+        <div class="answer-area" id="answer-area">${answerArea}</div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+    </div>
+  `;
+
+  // Focus input
+  setTimeout(() => {
+    const inp = document.getElementById('answer-input');
+    if (inp) inp.focus();
+  }, 100);
+}
+
+let selectedOption = null;
+function exitExercise() {
+  if (answered) return; // don't exit while feedback is showing
+  if (confirm('確定要退出練習嗎？目前的進度將不會保存。')) {
+    goDashboard();
+  }
+}
+function selectOption(opt) {
+  selectedOption = opt;
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  const el = document.getElementById(`opt-${opt.replace(/[^a-zA-Z0-9]/g,'_')}`);
+  if (el) el.classList.add('selected');
+  document.getElementById('submit-btn').disabled = false;
+}
+
+let answered = false;
+function submitAnswer() {
+  if (answered) return;
+  const isChallenge = state.currentSubject === 'challenge';
+  const bank = isChallenge ? null : QUESTION_BANKS[state.currentSubject];
+  const q = state.currentQuestions[state.currentIndex];
+  const qType = isChallenge ? (q._type || 'math_gen') : bank.type;
+  let userAnswer = '';
+
+  if (qType === 'choice' || qType === 'reading') {
+    userAnswer = selectedOption || '';
+  } else {
+    userAnswer = document.getElementById('answer-input')?.value.trim() || '';
+  }
+
+  if (!userAnswer) return;
+
+  answered = true;
+  document.getElementById('submit-btn').disabled = true;
+
+  // Normalize
+  const normUser = userAnswer.toLowerCase().replace(/\s+/g,'');
+  const normCorrect = q.a.toLowerCase().replace(/\s+/g,'');
+  const isCorrect = normUser === normCorrect;
+
+  if (isCorrect) {
+    state.score++;
+    state.answers.push({ q: q.q, user: userAnswer, correct: q.a, ok: true });
+    document.getElementById('feedback').innerHTML = '<span class="correct">✅ 正確！做得好！</span>';
+  } else {
+    state.answers.push({ q: q.q, user: userAnswer, correct: q.a, ok: false });
+    document.getElementById('feedback').innerHTML = `<span class="wrong">❌ 不對啊～ 正確答案是：<b>${q.a}</b></span>`;
+  }
+
+  // Auto advance
+  setTimeout(() => {
+    if (state.currentIndex + 1 < state.currentQuestions.length) {
+      state.currentIndex++;
+      answered = false;
+      selectedOption = null;
+      renderExercise();
+    } else {
+      // Session complete
+      finishSession();
+    }
+  }, state.answers[state.answers.length-1].ok ? 800 : 2000);
+}
+
+function finishSession() {
+  const total = state.currentQuestions.length;
+  const correct = state.score;
+  const wrongAnswers = state.answers.filter(a => !a.ok);
+  if (state.currentSubject === 'challenge') {
+    // For challenge, save as a single session under 'challenge'
+    recordSession('challenge', correct, total, wrongAnswers);
+  } else {
+    recordSession(state.currentSubject, correct, total, wrongAnswers);
+  }
+  state.screen = 'result';
+  render();
+}
+
+function renderResult() {
+  const isChallenge = state.currentSubject === 'challenge';
+  const bank = isChallenge ? null : QUESTION_BANKS[state.currentSubject];
+  const p = PROFILES[state.profile];
+  const total = state.currentQuestions.length;
+  const correct = state.score;
+  const pct = Math.round(correct/total*100);
+  const themeClass = p.color === 'jessie' ? 'jessie' : '';
+  const subjectName = isChallenge ? '綜合挑戰' : bank.name;
+
+  let emoji, title;
+  if (pct >= 90) { emoji = '🎉'; title = '太厲害了！'; }
+  else if (pct >= 70) { emoji = '👍'; title = '做得不錯！'; }
+  else if (pct >= 50) { emoji = '💪'; title = '繼續加油！'; }
+  else { emoji = '📚'; title = '再練一次吧！'; }
+
+  const wrongItems = state.answers.filter(a => !a.ok).map(a => `
+    <div style="margin-bottom:6px;">
+      <span style="color:var(--wrong)">❌</span> ${a.q}<br>
+      <span style="font-size:12px;">你的答案: <b style="color:var(--wrong)">${a.user}</b> → 正確: <b style="color:var(--correct)">${a.correct}</b></span>
+    </div>
+  `).join('');
+
+  app.innerHTML = `
+    <div class="screen active">
+      <div class="result-card">
+        <div class="result-emoji">${emoji}</div>
+        <div class="result-title">${title}</div>
+        <div class="result-subtitle">${subjectName} 練習完成</div>
+        <div class="result-stats">
+          <div class="result-stat">
+            <div class="result-stat-value" style="color:${pct>=70?'var(--correct)':pct>=50?'var(--gold)':'var(--wrong)'}">${pct}%</div>
+            <div class="result-stat-label">正確率</div>
+          </div>
+          <div class="result-stat">
+            <div class="result-stat-value">${correct}/${total}</div>
+            <div class="result-stat-label">答對 / 總題數</div>
+          </div>
+        </div>
+        ${wrongItems ? `<div class="result-detail"><b>需要複習的題目：</b>${wrongItems}</div>` : '<div style="color:var(--correct);font-weight:600;">全部答對！🎉</div>'}
+      </div>
+      <div class="result-actions">
+        <button class="result-btn primary ${themeClass}" onclick="${isChallenge ? 'startChallenge()' : `startExercise('${state.currentSubject}')`}">🔄 再練一次</button>
+        <button class="result-btn secondary" onclick="goDashboard()">📋 返回選單</button>
+      </div>
+    </div>
+  `;
+}
+
+// ===== NAVIGATION =====
+function selectProfile(profileId) {
+  state.profile = profileId;
+  state.screen = 'dashboard';
+  render();
+}
+
+function switchProfile() {
+  state.profile = null;
+  state.screen = 'profile';
+  render();
+}
+
+function goDashboard() {
+  state.screen = 'dashboard';
+  state.currentSubject = null;
+  render();
+}
+
+function showHistory() {
+  state.screen = 'history';
+  render();
+}
+
+function renderHistory() {
+  const p = PROFILES[state.profile];
+  const scores = loadScores();
+  const subjects = p.subjects;
+  
+  // Collect all sessions across all subjects for this profile
+  let allSessions = [];
+  subjects.forEach(sid => {
+    const s = scores[sid];
+    if (s && s.history) {
+      s.history.forEach(h => {
+        allSessions.push({
+          subjectId: sid,
+          subjectName: QUESTION_BANKS[sid].name,
+          subjectIcon: QUESTION_BANKS[sid].icon,
+          date: h.date,
+          correct: h.correct,
+          total: h.total,
+          pct: Math.round(h.correct/h.total*100),
+          wrongAnswers: h.wrongAnswers || [],
+        });
+      });
+    }
+  });
+  // Also include challenge sessions
+  if (scores['challenge'] && scores['challenge'].history) {
+    scores['challenge'].history.forEach(h => {
+      allSessions.push({
+        subjectId: 'challenge',
+        subjectName: '綜合挑戰',
+        subjectIcon: '🏆',
+        date: h.date, correct: h.correct, total: h.total,
+        pct: Math.round(h.correct/h.total*100),
+        wrongAnswers: h.wrongAnswers || [],
+      });
+    });
+  }
+  allSessions.sort((a,b) => b.date.localeCompare(a.date));
+
+  let content = '';
+  if (allSessions.length === 0) {
+    content = `<div class="history-empty"><div class="emoji">📭</div><p>還沒有學習記錄</p><p style="font-size:13px">完成一次練習後就會出現</p></div>`;
+  } else {
+    content = `<div class="history-list">` + allSessions.map((sess, idx) => {
+      const pctColor = sess.pct>=80?'var(--correct)':sess.pct>=50?'var(--gold)':'var(--wrong)';
+      // Show wrong answers if any
+      let wrongHtml = '';
+      if (sess.wrongAnswers && sess.wrongAnswers.length > 0) {
+        wrongHtml = `<div class="history-detail" style="display:none" id="detail-${idx}">
+          ${sess.wrongAnswers.map(w => `<div>❌ ${w.q}<br><span style="font-size:11px">你的: <b style="color:var(--wrong)">${w.user}</b> → <b style="color:var(--correct)">${w.correct}</b></span></div>`).join('')}
+        </div>`;
+      }
+      return `
+        <div class="history-card" onclick="toggleDetail(${idx})">
+          <div class="history-date">${sess.date}</div>
+          <div class="history-subject">${sess.subjectIcon} ${sess.subjectName}</div>
+          <div class="history-score-row">
+            <div class="history-pct" style="color:${pctColor}">${sess.pct}%</div>
+            <div class="history-fraction">${sess.correct}/${sess.total} 正確</div>
+          </div>
+          ${wrongHtml}
+        </div>
+      `;
+    }).join('') + `</div>`;
+  }
+
+  const themeClass = p.color==='jessie'?'jessie':'';
+  app.innerHTML = `
+    <div class="screen active">
+      <div class="dash-header">
+        <div class="dash-avatar ${p.color}" onclick="goDashboard()">${p.avatar}</div>
+        <div class="dash-info">
+          <div class="dash-name">${p.name}</div>
+          <div class="dash-grade">學習記錄</div>
+        </div>
+        <div class="dash-back" onclick="goDashboard()" title="返回">↩️</div>
+      </div>
+      <div class="section-title">最近練習 (${allSessions.length} 次)</div>
+      ${content}
+    </div>
+  `;
+}
+
+// Toggle wrong answer detail in history
+function toggleDetail(idx) {
+  const el = document.getElementById('detail-'+idx);
+  if (el) el.style.display = el.style.display==='none'?'block':'none';
+}
+
+function startChallenge() {
+  const p = PROFILES[state.profile];
+  const subjects = p.subjects;
+  
+  // Collect all questions from all subjects
+  let allQuestions = [];
+  subjects.forEach(sid => {
+    const bank = QUESTION_BANKS[sid];
+    if (bank.generator) {
+      // Dynamic: generate 4-5 questions per subject
+      const count = Math.min(5, Math.ceil(25/subjects.length));
+      for (let i=0; i<count; i++) {
+        const q = bank.generator();
+        q._subjectId = sid;
+        q._type = bank.type;
+        allQuestions.push(q);
+      }
+    } else if (bank.type === 'reading') {
+      // Pick 1 passage, take all its questions
+      const passage = bank.questions[Math.floor(Math.random()*bank.questions.length)];
+      passage.questions.forEach(subq => {
+        allQuestions.push({ q:subq.q, a:subq.a, opts:subq.opts, passage:passage.passage, _subjectId:sid, _type:'reading' });
+      });
+    } else {
+      // Static: pick random questions
+      const shuffled = [...bank.questions].sort(()=>Math.random()-0.5);
+      const picked = shuffled.slice(0, Math.min(4, shuffled.length));
+      picked.forEach(q => {
+        allQuestions.push({...q, _subjectId:sid, _type:bank.type});
+      });
+    }
+  });
+  
+  // Shuffle and pick 25
+  allQuestions = allQuestions.sort(()=>Math.random()-0.5).slice(0, 25);
+  
+  state.currentSubject = 'challenge';
+  state.currentQuestions = allQuestions;
+  state.currentIndex = 0;
+  state.score = 0;
+  state.answers = [];
+  answered = false;
+  selectedOption = null;
+  state.screen = 'exercise';
+  render();
+}
+
+function startExercise(subjectId) {
+  state.currentSubject = subjectId;
+  state.currentIndex = 0;
+  state.score = 0;
+  state.answers = [];
+  answered = false;
+  selectedOption = null;
+
+  const bank = QUESTION_BANKS[subjectId];
+  let questions;
+
+  if (bank.generator) {
+    // Use generator for dynamic questions (math_gen or choice type)
+    questions = [];
+    for (let i = 0; i < 10; i++) {
+      questions.push(bank.generator());
+    }
+  } else if (bank.type === 'reading') {
+    // Pick 2 random passages, extract their sub-questions
+    const shuffled = [...bank.questions].sort(() => Math.random() - 0.5);
+    questions = [];
+    const passages = shuffled.slice(0, Math.min(2, shuffled.length));
+    passages.forEach(p => {
+      p.questions.forEach(subq => {
+        questions.push({ q: subq.q, a: subq.a, opts: subq.opts, passage: p.passage });
+      });
+    });
+  } else {
+    // Shuffle and pick 10
+    const shuffled = [...bank.questions].sort(() => Math.random() - 0.5);
+    questions = shuffled.slice(0, Math.min(10, shuffled.length));
+  }
+
+  state.currentQuestions = questions;
+  state.screen = 'exercise';
+  render();
+}
+
+// ===== INIT =====
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// Initial render
+render();
+</script>
+</body>
+</html>
